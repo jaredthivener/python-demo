@@ -21,7 +21,7 @@ A colorful FastAPI server with rich logging, background traffic generation, and 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_ORG/python-demo.git
+git clone https://github.com/jaredthivener/python-demo.git
 cd python-demo
 ```
 
