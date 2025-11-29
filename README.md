@@ -14,7 +14,7 @@ A colorful FastAPI server with rich logging, background traffic generation, and 
 ## Prerequisites
 
 - Python 3.14 or higher
-- pip or uv (for package management)
+- [uv](https://docs.astral.sh/uv/) - Modern Python package manager
 
 ## Setup
 
@@ -25,24 +25,13 @@ git clone https://github.com/jaredthivener/python-demo.git
 cd python-demo
 ```
 
-### 2. Create a Virtual Environment
-
-```bash
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-```
-
-### 3. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-Or with uv:
+### 2. Create a Virtual Environment and Install Dependencies
 
 ```bash
 uv sync
 ```
+
+This command will create a virtual environment and install all dependencies from `pyproject.toml`.
 
 ## Running the Server
 
