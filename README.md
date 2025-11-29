@@ -29,16 +29,23 @@ cd python-demo
 
 ```bash
 uv sync
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 ```
 
-This command will create a virtual environment and install all dependencies from `pyproject.toml`.
+This command will create a virtual environment and install all dependencies from `pyproject.toml`. The `.venv/bin/activate` step activates the environment so you can use the installed packages.
 
 ## Running the Server
 
-Start the development server with auto-reload:
+Activate the virtual environment first (if not already activated):
 
 ```bash
-python -m uvicorn main:app --reload --no-access-log
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
+
+Then start the development server with auto-reload:
+
+```bash
+uvicorn main:app --reload --no-access-log
 ```
 
 The server will be available at `http://127.0.0.1:8000`
