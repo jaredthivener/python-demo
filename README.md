@@ -50,6 +50,10 @@ uvicorn main:app --reload --no-access-log
 
 The server will be available at `http://127.0.0.1:8000`
 
+**API Documentation:**
+- **Swagger UI**: `http://127.0.0.1:8000/docs` - Interactive API explorer
+- **ReDoc**: `http://127.0.0.1:8000/redoc` - Alternative API documentation
+
 ### Server Features
 
 - **Auto-reload**: The server automatically restarts when you modify `main.py`
