@@ -183,7 +183,7 @@ async def colorful_access_log(request: Request, call_next):
 
     # build compact rich Text with aligned columns
     line = Text()
-    line.append(f"{timestamp:<19}", style="dim")
+    line.append(f" {timestamp:<19}", style="dim")
     line.append(f" {status_text:<6}", style=status_style_str)
     line.append(f" {latency_ms:>8.2f}ms", style=latency_style)
     line.append(f" {resp_size:>7}", style="dim")
