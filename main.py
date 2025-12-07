@@ -8,19 +8,19 @@ from typing import Tuple
 import json
 import httpx
 
-from fastapi import FastAPI, Request
-from fastapi.responses import PlainTextResponse, Response
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import PlainTextResponse, Response, RedirectResponse
 from contextlib import asynccontextmanager
 from rich.console import Console
 from rich.text import Text
 from rich.logging import RichHandler
 
 # ---------------- Configuration ----------------
-WARN_MS = 100.0    # >= this will show a warning color
-SLOW_MS = 500.0    # >= this is "slow" (red)
+WARN_MS = 100.0
+SLOW_MS = 500.0
 FAVICON_PATH = "/favicon.ico"
-FAVICON_CACHE_SECONDS = 31_536_000  # 1 year
-SERVER_PORT = 8000 # Assumed port for the background traffic generator
+FAVICON_CACHE_SECONDS = 31_536_000
+SERVER_PORT = 8000
 
 # ---------------- Logging setup ----------------
 logging.basicConfig(
@@ -30,24 +30,22 @@ logging.basicConfig(
     handlers=[RichHandler(markup=True)]
 )
 logger = logging.getLogger("myapp")
-# Silence httpx so we only see server-side logs
+
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
-# silence uvicorn.access (we print our own pretty access lines)
 logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
 
-# console for pretty printing
 console = Console()
+
 
 # ---------------- Helpers ----------------
 def status_style(status_code: int) -> Tuple[str, str]:
-    """Return (style, label) for a numeric status."""
     if status_code >= 500:
         return ("white on red", str(status_code))
     if status_code >= 400:
         return ("black on yellow", str(status_code))
     if status_code >= 300:
-        return ("black on cyan", str(status_code))
+        return ("black on orange3", str(status_code))
     return ("black on green", str(status_code))
 
 
@@ -73,36 +71,29 @@ def fmt_size_from_header(hval: str | None) -> str:
         n = int(hval)
     except Exception:
         return hval
-    # human friendly
     if n < 1024:
         return f"{n}B"
     if n < 1024**2:
         return f"{n/1024:.1f}KB"
     return f"{n/1024**2:.1f}MB"
 
-# ---------------- App & Middleware ----------------
 
+# ---------------- App & Lifespan ----------------
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Manage app lifespan events."""
-    # Startup
     asyncio.create_task(generate_traffic())
     yield
-    # Shutdown (if needed)
 
 
 app = FastAPI(lifespan=lifespan)
 
 
+# ---------------- Traffic Generator ----------------
 async def generate_traffic():
-    """Simulates random traffic to the local server."""
-    # Give the server a moment to start up
     await asyncio.sleep(2.0)
-    
+
     base_url = f"http://127.0.0.1:{SERVER_PORT}"
-    
-    # List of (Method, Path Template)
-    # We will format the path with a random ID if needed
+
     operations = [
         ("GET", "/"),
         ("GET", "/api/tags"),
@@ -113,34 +104,48 @@ async def generate_traffic():
         ("DELETE", "/api/items/{id}"),
         ("HEAD", "/api/status"),
         ("OPTIONS", "/api/options"),
-        ("GET", "/api/error/400"),
-        ("GET", "/api/error/404"),
-        ("GET", "/api/error/500"),
-        ("GET", "/api/error/503"),
+        ("GET", "/api/redirect"),
+        # error simulations (realistic rerouting happens below)
+        ("ERR", "400"),
+        ("ERR", "404"),
+        ("ERR", "500"),
+        ("ERR", "503"),
     ]
 
     console.print(f"[bold cyan]Starting background traffic generator targeting {base_url}...[/bold cyan]")
 
     async with httpx.AsyncClient(base_url=base_url, timeout=5.0) as client:
         while True:
-            method, path_template = random.choice(operations)
-            
-            # Insert a random ID if the path requires it
-            path = path_template.format(id=random.randint(1000, 9999))
-            
+            method, value = random.choice(operations)
+
+            # ---------------- ERROR SIMULATION PATCH ----------------
+            if method == "ERR":
+                item_id = random.randint(1000, 9999)
+                path = f"/api/items/{item_id}"
+                headers = {"X-Force-Error": value}
+
+                # Use PATCH so the handler runs and X-Force-Error takes effect
+                try:
+                    await client.request("PATCH", path, headers=headers)
+                except Exception:
+                    pass
+
+                await asyncio.sleep(random.uniform(0.5, 2.0))
+                continue
+
+            # ---------------- NORMAL ROUTES ----------------
+            path = value.format(id=random.randint(1000, 9999))
             try:
                 await client.request(method, path)
             except Exception:
-                # Ignore connection errors (e.g. if server is stopping)
                 pass
-            
-            # Wait a random time between 0.5s and 2.0s
+
             await asyncio.sleep(random.uniform(0.5, 2.0))
 
 
+# ---------------- Middleware (Pretty Log) ----------------
 @app.middleware("http")
 async def colorful_access_log(request: Request, call_next):
-    # quick favicon short-circuit to reduce noise + send caching header
     if request.url.path == FAVICON_PATH:
         return PlainTextResponse(
             status_code=204,
@@ -156,23 +161,19 @@ async def colorful_access_log(request: Request, call_next):
         response: Response = await call_next(request)
         status_code = response.status_code
     except Exception:
-        # log exception with stacktrace, return 500 to client but still log nicely
         status_code = 500
         response = PlainTextResponse("Internal server error", status_code=500)
         logger.exception("Unhandled exception while handling request")
 
-    # ensure request id on response for correlation
     response.headers["X-Request-ID"] = request_id
 
-    end = time.monotonic()
-    latency_ms = (end - start) * 1000.0
-    latency_style = "green"
-    if latency_ms >= SLOW_MS:
-        latency_style = "bold red"
-    elif latency_ms >= WARN_MS:
-        latency_style = "yellow"
+    latency_ms = (time.monotonic() - start) * 1000.0
+    latency_style = (
+        "bold red" if latency_ms >= SLOW_MS
+        else "yellow" if latency_ms >= WARN_MS
+        else "green"
+    )
 
-    # prepare fields
     status_style_str, status_text = status_style(status_code)
     mstyle = method_style(request.method)
     path = request.url.path
@@ -181,7 +182,6 @@ async def colorful_access_log(request: Request, call_next):
 
     resp_size = fmt_size_from_header(response.headers.get("content-length"))
 
-    # build compact rich Text with aligned columns
     line = Text()
     line.append(f" {timestamp:<19}", style="dim")
     line.append(f" {status_text:<6}", style=status_style_str)
@@ -196,10 +196,9 @@ async def colorful_access_log(request: Request, call_next):
     return response
 
 
-# ---------------- Example endpoints ----------------
+# ---------------- Example Endpoints ----------------
 @app.get("/api/tags")
 async def tags():
-    # Simulate slight work
     await asyncio.sleep(0.05)
     return {"tags": ["fastapi", "logging", "rich"]}
 
@@ -211,7 +210,6 @@ async def ps():
 
 @app.post("/api/pull")
 async def pull():
-    # don't block the event loop: use asyncio.sleep
     await asyncio.sleep(0.12)
     return {"pulled": True}
 
@@ -221,79 +219,48 @@ async def root():
     return {"hello": "world"}
 
 
-# ---------------- METHOD TESTS ----------------
+# ---------------- Item Endpoints (with forced error support) ----------------
+def maybe_force_error(request: Request):
+    """Check for X-Force-Error header and raise an error if present."""
+    forced = request.headers.get("X-Force-Error")
+    if forced:
+        code = int(forced)
+        raise HTTPException(status_code=code, detail=f"Simulated error {code}")
+
+@app.get("/api/redirect")
+async def redirect_test():
+    item_id = random.randint(1000, 9999)
+    return RedirectResponse(url=f"/api/items/{item_id}", status_code=307)
 
 @app.put("/api/items/{item_id}")
-async def update_item(item_id: str):
+async def update_item(item_id: str, request: Request):
+    maybe_force_error(request)
     await asyncio.sleep(0.1)
     return {"method": "PUT", "id": item_id, "status": "updated"}
 
 
 @app.patch("/api/items/{item_id}")
-async def patch_item(item_id: str):
-    # await asyncio.sleep(0.1)
+async def patch_item(item_id: str, request: Request):
+    maybe_force_error(request)
     return {"method": "PATCH", "id": item_id, "status": "patched"}
 
 
 @app.delete("/api/items/{item_id}")
-async def delete_item(item_id: str):
+async def delete_item(item_id: str, request: Request):
+    maybe_force_error(request)
     await asyncio.sleep(0.5)
     return {"method": "DELETE", "id": item_id, "status": "deleted"}
 
 
+# ---------------- Status Endpoints ----------------
 @app.head("/api/status")
 async def status_head():
-    # HEAD requests shouldn't return a body
     return Response(headers={"X-System-Status": "OK"}, status_code=200)
 
 
 @app.options("/api/options")
 async def options_test():
     return Response(
-        headers={"Allow": "OPTIONS, GET, POST, PUT, PATCH, DELETE, HEAD"}, 
+        headers={"Allow": "OPTIONS, GET, POST, PUT, PATCH, DELETE, HEAD"},
         status_code=200
-    )
-
-
-# ---------------- ERROR SIMULATIONS ----------------
-
-@app.get("/api/error/400")
-async def error_bad_request():
-    """Simulate a 400 Bad Request error."""
-    return Response(
-        content=json.dumps({"error": "Invalid request parameters"}),
-        status_code=400,
-        media_type="application/json"
-    )
-
-
-@app.get("/api/error/404")
-async def error_not_found():
-    """Simulate a 404 Not Found error."""
-    return Response(
-        content=json.dumps({"error": "Resource not found"}),
-        status_code=404,
-        media_type="application/json"
-    )
-
-
-@app.get("/api/error/500")
-async def error_internal_server():
-    """Simulate a 500 Internal Server Error."""
-    await asyncio.sleep(0.15)
-    return Response(
-        content=json.dumps({"error": "Internal server error"}),
-        status_code=500,
-        media_type="application/json"
-    )
-
-
-@app.get("/api/error/503")
-async def error_service_unavailable():
-    """Simulate a 503 Service Unavailable error."""
-    await asyncio.sleep(0.6)
-    return Response(
-        content=json.dumps({"error": "Service temporarily unavailable"}),
-        status_code=503,
-        media_type="application/json"
     )
