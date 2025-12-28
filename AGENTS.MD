@@ -65,8 +65,7 @@ All decisions must follow this order:
 
 1. `AGENTS.md` (This file is the authoritative distillation of the Microsoft cloud-native article.)
 2. Explicit user instructions in the current prompt
-3. Industry best practices
-   (Only when consistent with `AGENTS.md`)
+3. Industry best practices (Only when consistent with `AGENTS.md`)
 
 If a conflict exists, **stop and explain it**. Never silently override.
 
