@@ -1,0 +1,168 @@
+---
+sidebar_position: 1
+---
+
+# Books API Reference
+
+Full endpoint reference for the demo Books CRUD API.
+
+**Base URL:** `http://localhost:8000/api/v1`
+
+The API follows RFC 7807 for error responses and uses standard HTTP status codes.
+
+## Endpoints
+
+### `GET /books`
+
+List all books with pagination.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `skip` | integer | `0` | Number of items to skip |
+| `limit` | integer | `20` | Max items to return (1–100) |
+
+```bash
+curl "http://localhost:8000/api/v1/books?skip=0&limit=10"
+```
+
+**Response 200:**
+```json
+{
+  "items": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "title": "Clean Code",
+      "author": "Robert C. Martin",
+      "year": 2008,
+      "created_at": "2026-03-14T10:00:00Z"
+    }
+  ],
+  "total": 3,
+  "skip": 0,
+  "limit": 10
+}
+```
+
+---
+
+### `POST /books`
+
+Create a new book. Returns `201 Created`.
+
+```bash
+curl -X POST http://localhost:8000/api/v1/books \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "The Pragmatic Programmer",
+    "author": "David Thomas, Andrew Hunt",
+    "year": 2019
+  }'
+```
+
+**Request body:**
+```json
+{
+  "title": "string (required, 1–200 chars)",
+  "author": "string (required, 1–100 chars)",
+  "year": "integer (1900–2100)"
+}
+```
+
+**Response 201:** Full `BookResponse` object.
+
+---
+
+### `GET /books/{book_id}`
+
+Get a single book by UUID.
+
+```bash
+curl http://localhost:8000/api/v1/books/3fa85f64-5717-4562-b3fc-2c963f66afa6
+```
+
+**Response 404** if not found:
+```json
+{"detail": "Book not found"}
+```
+
+---
+
+### `PATCH /books/{book_id}`
+
+Partial update — only fields included in the request body are changed.
+
+```bash
+curl -X PATCH http://localhost:8000/api/v1/books/3fa85f64-5717-4562-b3fc-2c963f66afa6 \
+  -H "Content-Type: application/json" \
+  -d '{"year": 2022}'
+```
+
+Uses `model_dump(exclude_unset=True)` internally — fields omitted from the payload are untouched.
+
+---
+
+### `DELETE /books/{book_id}`
+
+Delete a book. Returns a confirmation message.
+
+```bash
+curl -X DELETE http://localhost:8000/api/v1/books/3fa85f64-5717-4562-b3fc-2c963f66afa6
+```
+
+**Response 200:**
+```json
+{"message": "Book 3fa85f64-... deleted successfully"}
+```
+
+---
+
+### `GET /books/search/`
+
+Search books by title or author substring (case-insensitive).
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `q` | string | yes | Search query (min 1 char) |
+| `skip` | integer | no | Pagination offset |
+| `limit` | integer | no | Max results |
+
+```bash
+curl "http://localhost:8000/api/v1/books/search/?q=clean"
+```
+
+---
+
+## Error responses
+
+| Status | Meaning |
+|---|---|
+| `422 Unprocessable Entity` | Validation error (Pydantic) — body contains field-level errors |
+| `404 Not Found` | Book UUID not in store |
+| `405 Method Not Allowed` | Wrong HTTP verb |
+
+**Example 422:**
+```json
+{
+  "detail": [
+    {
+      "type": "string_too_short",
+      "loc": ["body", "title"],
+      "msg": "String should have at least 1 character",
+      "input": ""
+    }
+  ]
+}
+```
+
+## Data model
+
+```python
+class BookResponse(BaseModel):
+    id: UUID
+    title: str
+    author: str
+    year: int
+    created_at: datetime
+```
+
+Internal fields (`id`, `created_at`) are never accepted in request bodies — separate `BookCreate` and `BookUpdate` models enforce this boundary.

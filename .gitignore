@@ -21,3 +21,9 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Node / website
+node_modules/
+website/node_modules/
+website/build/
+website/.docusaurus/
