@@ -1,5 +1,12 @@
 ---
 sidebar_position: 1
+description: Multi-cloud deployment overview for the Python Demo API across AWS, GCP, and Azure hosting options.
+keywords:
+  - deployment
+  - aws
+  - gcp
+  - azure
+  - fastapi
 ---
 
 # Deployment Overview

@@ -97,6 +97,16 @@ class HealthResponse(BaseModel):
     chaos_headers_enabled: bool
 
 
+class RootMetadata(BaseModel):
+    name: str
+    version: str
+    docs_url: str
+    redoc_url: str
+    openapi_url: str
+    traffic_generator_enabled: bool
+    chaos_headers_enabled: bool
+
+
 class InMemoryBookStore:
     def __init__(self, books: dict[UUID, BookResponse] | None = None) -> None:
         self._books: dict[UUID, BookResponse] = dict(books or {})
@@ -393,16 +403,18 @@ async def colorful_access_log(request: Request, call_next):
 
 
 # ---------------- Core Endpoints ----------------
-@app.get("/", tags=["Monitoring"])
-async def root() -> dict[str, str | bool]:
+@app.get("/", response_model=RootMetadata, tags=["Monitoring"])
+async def root() -> RootMetadata:
     """Return high-level API metadata and local documentation links."""
-    return {
-        "name": APP_NAME,
-        "version": APP_VERSION,
-        "docs_url": "/docs",
-        "traffic_generator_enabled": traffic_generator_enabled(),
-        "chaos_headers_enabled": chaos_headers_enabled(),
-    }
+    return RootMetadata(
+        name=APP_NAME,
+        version=APP_VERSION,
+        docs_url="/docs",
+        redoc_url="/redoc",
+        openapi_url="/openapi.json",
+        traffic_generator_enabled=traffic_generator_enabled(),
+        chaos_headers_enabled=chaos_headers_enabled(),
+    )
 
 
 @app.get("/api/ps", response_model=HealthResponse, tags=["Monitoring"])

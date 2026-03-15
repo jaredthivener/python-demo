@@ -157,3 +157,48 @@ python-demo/
 ## Next layer
 
 The website under `website/` contains the broader auth and multi-cloud deployment guidance. The backend and README now define the local source of truth for the live demo API.
+
+## MCP ingestion
+
+If another team wants to build an MCP server or other machine-ingestion workflow from this repo, prefer these sources in this order:
+
+1. `website/static/openapi.json` for the live API contract
+2. `website/static/docs-index.json` for the curated docs manifest
+3. `website/static/llms.txt` for the concise crawler entrypoint
+4. `website/build/sitemap.xml` or the deployed `/sitemap.xml` for URL discovery
+5. `website/docs/**/*.md` for the canonical prose source
+
+The running API also exposes `GET /openapi.json` automatically through FastAPI, and `GET /` now returns `docs_url`, `redoc_url`, and `openapi_url` to make those entry points explicit.
+
+These artifacts are generated from source, not meant to be hand-maintained.
+
+To refresh the checked-in machine-readable artifacts after changing routes, models, or docs:
+
+```bash
+uv run python scripts/generate_machine_artifacts.py
+```
+
+For the full automation loop, use one of these entrypoints:
+
+```bash
+make fix    # auto-fix, regenerate, then validate everything
+make check  # validate only, no file changes
+```
+
+The same loop is available without `make`:
+
+```bash
+uv run python scripts/repo_loop.py fix
+uv run python scripts/repo_loop.py check
+```
+
+`fix` runs generation before and after formatting so the docs formatter cannot leave `docs-index.json` or `llms.txt` stale.
+
+Workflow split:
+
+- `CI` stays read-only and fails on drift.
+- `Autofix Repo Standards` runs on pushes to `main`, applies `make fix`, and opens or updates an automation PR instead of pushing directly to `main`.
+
+See `scripts/README.md` for the script-level details and how the loop fits into the repo.
+
+CI also verifies that `website/static/openapi.json`, `website/static/docs-index.json`, and `website/static/llms.txt` are up to date.

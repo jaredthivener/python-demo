@@ -1,5 +1,11 @@
 ---
 sidebar_position: 1
+description: Decision guide for JWT bearer auth, managed identity, and Microsoft Entra ID in a FastAPI application.
+keywords:
+  - authentication
+  - jwt
+  - managed identity
+  - entra id
 ---
 
 # Auth Overview — The Big Picture

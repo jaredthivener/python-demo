@@ -1,0 +1,28 @@
+# Python Demo API
+
+Python Demo API is a compact FastAPI reference app with a realistic Books API and supporting documentation for authentication and multi-cloud deployment.
+
+Preferred ingestion order:
+1. /openapi.json
+2. /docs-index.json
+3. /sitemap.xml
+4. Source markdown under website/docs/
+
+Primary machine-readable artifacts:
+- OpenAPI contract: https://jaredthivener.github.io/python-demo/openapi.json
+- Curated docs manifest: https://jaredthivener.github.io/python-demo/docs-index.json
+- Sitemap: https://jaredthivener.github.io/python-demo/sitemap.xml
+
+Primary human-readable docs:
+- Introduction: https://jaredthivener.github.io/python-demo/docs/intro
+- Getting Started: https://jaredthivener.github.io/python-demo/docs/getting-started
+- Books API Reference: https://jaredthivener.github.io/python-demo/docs/api/books
+- Auth Overview — The Big Picture: https://jaredthivener.github.io/python-demo/docs/auth/overview
+- Deployment Overview: https://jaredthivener.github.io/python-demo/docs/deployment
+
+Notes for tool builders:
+- Treat the OpenAPI contract as the source of truth for executable API tools.
+- Treat docs-index.json as the curated map of canonical topics and URLs.
+- Use sitemap.xml for discovery, not for ranking authority.
+- Prefer raw markdown from the repository over scraping built HTML when deeper ingestion is possible.
+- The live demo app covers the Books API and observability endpoints; broader auth and cloud patterns live in the docs.

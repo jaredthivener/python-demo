@@ -1,5 +1,11 @@
 ---
 sidebar_position: 1
+description: Endpoint reference for the live Books API, including pagination, search, create, patch, delete, and error behavior.
+keywords:
+  - api reference
+  - openapi
+  - books api
+  - fastapi
 ---
 
 # Books API Reference

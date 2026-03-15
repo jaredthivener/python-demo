@@ -1,5 +1,12 @@
 ---
 sidebar_position: 1
+description: Overview of the Python Demo API, its live FastAPI surface, and the docs areas that expand on auth and cloud deployment patterns.
+keywords:
+  - fastapi
+  - python
+  - books api
+  - auth
+  - deployment
 ---
 
 # Introduction

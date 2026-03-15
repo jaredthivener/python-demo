@@ -1,0 +1,231 @@
+{
+  "name": "python-demo-docs",
+  "version": 1,
+  "site": {
+    "title": "Python Demo API",
+    "baseUrl": "https://jaredthivener.github.io/python-demo"
+  },
+  "ingestion": {
+    "preferredSources": [
+      "openapi",
+      "docs-index",
+      "sitemap",
+      "markdown"
+    ],
+    "notes": [
+      "Use the OpenAPI contract for executable API tool generation.",
+      "Use this manifest to rank canonical documentation pages.",
+      "Use the sitemap for discovery only.",
+      "Prefer raw markdown from the repository when available."
+    ]
+  },
+  "artifacts": {
+    "openapi": {
+      "url": "https://jaredthivener.github.io/python-demo/openapi.json",
+      "path": "website/static/openapi.json"
+    },
+    "llms": {
+      "url": "https://jaredthivener.github.io/python-demo/llms.txt",
+      "path": "website/static/llms.txt"
+    },
+    "sitemap": {
+      "url": "https://jaredthivener.github.io/python-demo/sitemap.xml",
+      "path": "website/build/sitemap.xml"
+    }
+  },
+  "documents": [
+    {
+      "id": "api-books",
+      "title": "Books API Reference",
+      "category": "api",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/api/books",
+      "sourcePath": "website/docs/api/books.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/api/books.md",
+      "priority": "critical",
+      "summary": "Endpoint reference for the live Books API, including pagination, search, create, patch, delete, and error behavior.",
+      "relatedArtifacts": [
+        "https://jaredthivener.github.io/python-demo/openapi.json"
+      ]
+    },
+    {
+      "id": "auth-managed-identity",
+      "title": "Cloud IAM / Workload Identity",
+      "category": "auth",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/auth/managed-identity",
+      "sourcePath": "website/docs/auth/managed-identity.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/auth/managed-identity.md",
+      "priority": "high",
+      "summary": "Pattern 2 \u2014 your app authenticates to cloud services using a **platform-assigned identity**, with no long-lived credentials stored anywhere."
+    },
+    {
+      "id": "auth-overview",
+      "title": "Auth Overview \u2014 The Big Picture",
+      "category": "auth",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/auth/overview",
+      "sourcePath": "website/docs/auth/overview.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/auth/overview.md",
+      "priority": "high",
+      "summary": "Decision guide for JWT bearer auth, managed identity, and Microsoft Entra ID in a FastAPI application."
+    },
+    {
+      "id": "deployment-overview",
+      "title": "Deployment Overview",
+      "category": "deployment",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/deployment",
+      "sourcePath": "website/docs/deployment/index.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/deployment/index.md",
+      "priority": "high",
+      "summary": "Multi-cloud deployment overview for the Python Demo API across AWS, GCP, and Azure hosting options."
+    },
+    {
+      "id": "getting-started",
+      "title": "Getting Started",
+      "category": "overview",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/getting-started",
+      "sourcePath": "website/docs/getting-started.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/getting-started.md",
+      "priority": "high",
+      "summary": "Quick local setup for the Python Demo API, including dependency install, running the FastAPI server, and verifying the Books API."
+    },
+    {
+      "id": "intro",
+      "title": "Introduction",
+      "category": "overview",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/intro",
+      "sourcePath": "website/docs/intro.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/intro.md",
+      "priority": "high",
+      "summary": "Overview of the Python Demo API, its live FastAPI surface, and the docs areas that expand on auth and cloud deployment patterns."
+    },
+    {
+      "id": "auth-entra-id",
+      "title": "Microsoft Entra ID",
+      "category": "auth",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/auth/entra-id",
+      "sourcePath": "website/docs/auth/entra-id.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/auth/entra-id.md",
+      "priority": "medium",
+      "summary": "Pattern 3 \u2014 enterprise SSO with MFA, conditional access, and app roles managed in the Azure portal."
+    },
+    {
+      "id": "auth-jwt-bearer",
+      "title": "JWT Bearer Authentication",
+      "category": "auth",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/auth/jwt-bearer",
+      "sourcePath": "website/docs/auth/jwt-bearer.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/auth/jwt-bearer.md",
+      "priority": "medium",
+      "summary": "Pattern 1 \u2014 stateless, self-contained tokens for user-facing APIs."
+    },
+    {
+      "id": "deployment-app-service",
+      "title": "Azure App Service",
+      "category": "deployment",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/deployment/app-service",
+      "sourcePath": "website/docs/deployment/app-service.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/deployment/app-service.md",
+      "priority": "medium",
+      "summary": "The simplest path to a production FastAPI app on Azure \u2014 git push or ZIP deploy, TLS included, Managed Identity with one toggle."
+    },
+    {
+      "id": "deployment-aws",
+      "title": "AWS Deployment",
+      "category": "deployment",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/deployment/aws",
+      "sourcePath": "website/docs/deployment/aws.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/deployment/aws.md",
+      "priority": "medium",
+      "summary": "Deploy FastAPI to AWS with zero long-lived credentials using IAM Roles for Service Accounts (IRSA) or Lambda execution roles."
+    },
+    {
+      "id": "deployment-azure-functions",
+      "title": "Azure Functions",
+      "category": "deployment",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/deployment/azure-functions",
+      "sourcePath": "website/docs/deployment/azure-functions.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/deployment/azure-functions.md",
+      "priority": "medium",
+      "summary": "Deploy FastAPI as a serverless Azure Function using the **Python v2 programming model** \u2014 a single-file, decorator-based approach that requires no `function.json` files."
+    },
+    {
+      "id": "deployment-gcp",
+      "title": "GCP Deployment",
+      "category": "deployment",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/deployment/gcp",
+      "sourcePath": "website/docs/deployment/gcp.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/deployment/gcp.md",
+      "priority": "medium",
+      "summary": "Deploy FastAPI to Google Cloud with zero long-lived credentials using Workload Identity Federation and Application Default Credentials (ADC)."
+    },
+    {
+      "id": "deployment-aks",
+      "title": "AKS (Azure Kubernetes Service)",
+      "category": "deployment",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/deployment/aks",
+      "sourcePath": "website/docs/deployment/aks.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/deployment/aks.md",
+      "priority": "low",
+      "summary": "Deploy FastAPI on Kubernetes with Workload Identity for pod-level Managed Identity \u2014 the modern, secure approach."
+    },
+    {
+      "id": "deployment-aws-ecs-fargate",
+      "title": "ECS Fargate",
+      "category": "deployment",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/deployment/aws-ecs-fargate",
+      "sourcePath": "website/docs/deployment/aws-ecs-fargate.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/deployment/aws-ecs-fargate.md",
+      "priority": "low",
+      "summary": "Deploy FastAPI on AWS Fargate \u2014 managed containers without EC2 instances to patch. Each task gets its own IAM role via ECS Task IAM Roles."
+    },
+    {
+      "id": "deployment-aws-eks",
+      "title": "EKS (Elastic Kubernetes Service)",
+      "category": "deployment",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/deployment/aws-eks",
+      "sourcePath": "website/docs/deployment/aws-eks.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/deployment/aws-eks.md",
+      "priority": "low",
+      "summary": "Deploy FastAPI on Amazon EKS using **IAM Roles for Service Accounts (IRSA)** \u2014 each pod gets its own IAM role with no node-level credentials."
+    },
+    {
+      "id": "deployment-aws-lambda",
+      "title": "AWS Lambda",
+      "category": "deployment",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/deployment/aws-lambda",
+      "sourcePath": "website/docs/deployment/aws-lambda.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/deployment/aws-lambda.md",
+      "priority": "low",
+      "summary": "Deploy FastAPI as a serverless Lambda function using [Mangum](https://github.com/jordaneremieff/mangum) and [AWS Lambda Powertools](https://docs.powertools.aws.dev/lambda/python/latest/) \u2014 the AWS-built toolkit for production observability (Logger, Tracer, Metrics, and Parameters)."
+    },
+    {
+      "id": "deployment-gcp-app-engine",
+      "title": "App Engine",
+      "category": "deployment",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/deployment/gcp-app-engine",
+      "sourcePath": "website/docs/deployment/gcp-app-engine.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/deployment/gcp-app-engine.md",
+      "priority": "low",
+      "summary": "App Engine Standard uses the default App Engine service account bound to your app. Useful for simple APIs that don't need custom networking."
+    },
+    {
+      "id": "deployment-gcp-cloud-run",
+      "title": "Cloud Run",
+      "category": "deployment",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/deployment/gcp-cloud-run",
+      "sourcePath": "website/docs/deployment/gcp-cloud-run.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/deployment/gcp-cloud-run.md",
+      "priority": "low",
+      "summary": "Cloud Run is the simplest GCP deployment: push a container, get a URL. Each revision runs with a bound Google Cloud service account \u2014 no key files needed."
+    },
+    {
+      "id": "deployment-gcp-gke",
+      "title": "GKE (Google Kubernetes Engine)",
+      "category": "deployment",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/deployment/gcp-gke",
+      "sourcePath": "website/docs/deployment/gcp-gke.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/deployment/gcp-gke.md",
+      "priority": "low",
+      "summary": "GKE Workload Identity maps a Kubernetes service account to a Google Cloud service account, giving each pod its own IAM identity \u2014 no node-level credentials."
+    }
+  ]
+}

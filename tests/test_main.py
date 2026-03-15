@@ -35,6 +35,8 @@ def test_root_returns_metadata(client: TestClient) -> None:
         "name": "python-demo",
         "version": "0.3.0",
         "docs_url": "/docs",
+        "redoc_url": "/redoc",
+        "openapi_url": "/openapi.json",
         "traffic_generator_enabled": False,
         "chaos_headers_enabled": False,
     }

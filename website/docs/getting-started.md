@@ -1,5 +1,11 @@
 ---
 sidebar_position: 2
+description: Quick local setup for the Python Demo API, including dependency install, running the FastAPI server, and verifying the Books API.
+keywords:
+  - quickstart
+  - fastapi
+  - uv
+  - books api
 ---
 
 # Getting Started
