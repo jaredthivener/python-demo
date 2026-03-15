@@ -81,6 +81,14 @@ Aim for high coverage on critical parts like middleware and traffic generator.
 - For full repo CI parity, use `make check`.
 - Favor small, focused patches that satisfy tests without introducing unrelated refactors.
 
+## Production Safety Guardrails
+
+- Treat `main` and production deployment paths as protected surfaces.
+- Never push directly to `main` unless there is explicit human intent for a production-impacting change.
+- The local `pre-push` hook blocks `main` pushes by default; only bypass intentionally with `ALLOW_PROD_PUSH=true`.
+- Production docs deployment is manual-only via `workflow_dispatch` and requires `confirm_production_deploy=YES`.
+- For AI-assisted work, default to PR-first flow for all deployment-affecting changes.
+
 ## Security Considerations
 - Validate inputs with FastAPI's built-in features (e.g., path params).
 - Use headers for simulations (e.g., X-Force-Error, X-Request-ID).

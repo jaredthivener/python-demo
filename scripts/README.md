@@ -72,6 +72,12 @@ Recommended usage:
 - Run `make check-backend` or `make check-docs` when you want to match a single CI job locally.
 - Run `make install-hooks` once per clone to enforce `make fix` automatically before commits.
 
+With hooks installed, production safety defaults are enforced locally:
+
+- pre-commit: `make fix` + `make check`
+- pre-push: `make check`
+- pushes to `main` require explicit override: `ALLOW_PROD_PUSH=true`
+
 ### CI and GitHub Actions
 
 The repo uses two different workflow roles:

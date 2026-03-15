@@ -132,6 +132,7 @@ To apply formatting locally:
 
 ```bash
 make fix
+```
 
 Install local git hooks once per clone to automatically run the repo fix loop
 before every commit:
@@ -140,9 +141,24 @@ before every commit:
 make install-hooks
 ```
 
-With hooks installed, commits will run `make fix` and stage updated files so
-formatting and generated artifacts stay aligned with CI.
+With hooks installed:
+
+- pre-commit runs `make fix` and `make check`
+- pre-push runs `make check`
+- direct pushes to `main` are blocked by default unless you explicitly set `ALLOW_PROD_PUSH=true`
+
+Example intentional main push:
+
+```bash
+ALLOW_PROD_PUSH=true git push origin main
 ```
+
+## Production deployment guardrail
+
+Docs deployment to GitHub Pages is manual-only.
+
+Use `workflow_dispatch` and set the input `confirm_production_deploy` to `YES`.
+This explicit confirmation prevents accidental production deploys.
 
 ## Logging
 

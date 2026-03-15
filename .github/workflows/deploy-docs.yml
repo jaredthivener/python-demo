@@ -1,12 +1,12 @@
 name: Deploy Docs to GitHub Pages
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "website/**"
   workflow_dispatch:
+    inputs:
+      confirm_production_deploy:
+        description: "Type YES to deploy docs to production"
+        required: true
+        default: "NO"
 
 permissions:
   contents: read
@@ -50,6 +50,7 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     needs: build
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.confirm_production_deploy == 'YES'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

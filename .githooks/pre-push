@@ -4,5 +4,17 @@ set -euo pipefail
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
 echo "[pre-push] Running full validation loop (make check)..."
 make check
+
+if [[ "$current_branch" == "main" && "${ALLOW_PROD_PUSH:-false}" != "true" ]]; then
+	cat <<'EOF'
+[pre-push] Push to main is blocked by default.
+
+Set ALLOW_PROD_PUSH=true for an explicit, intentional production push:
+	ALLOW_PROD_PUSH=true git push origin main
+EOF
+	exit 1
+fi
