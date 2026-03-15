@@ -13,6 +13,10 @@ Pattern 3 — enterprise SSO with MFA, conditional access, and app roles managed
 - Any API that needs corporate SSO — no custom password system to build or maintain
 - When you need MFA and conditional access policies enforced by IT (not by you)
 
+:::note Other Public Providers
+The token-validation pattern on this page is not unique to Entra ID. The same JWKS-based verification model also shows up with other public identity providers such as Auth0, Firebase Authentication, and Amazon Cognito. This guide keeps the concrete example on Entra ID because that is the Azure-native enterprise SSO path for this repo.
+:::
+
 ## How it works
 
 ```
@@ -23,6 +27,8 @@ Your app → Fetch JWKS from Entra ID
          ← Public keys
 Your app verifies token signature locally (fast, no Entra round-trip per request)
 ```
+
+If you swap Entra ID for another OpenID Connect or OAuth provider, the moving parts stay broadly the same: the client sends a bearer token, your API reads `iss` and `kid` from the JWT, fetches the provider's JWKS metadata, selects the matching signing key, and verifies the token locally.
 
 ## Register your app
 
@@ -35,7 +41,7 @@ Your app verifies token signature locally (fast, no Entra round-trip per request
 ## Install dependencies
 
 ```bash
-uv add "pyjwt[crypto]" httpx
+uv add "pyjwt[crypto]" pyjwt-key-fetcher
 ```
 
 ## Validation implementation
@@ -44,11 +50,12 @@ uv add "pyjwt[crypto]" httpx
 import os
 from typing import Annotated
 
-import httpx
 import jwt
 from fastapi import Depends, FastAPI, HTTPException, Security, status
-from fastapi.security import OAuth2AuthorizationCodeBearer
+from fastapi.security import OAuth2AuthorizationCodeBearer, SecurityScopes
 from pydantic import BaseModel
+from pyjwt_key_fetcher import AsyncKeyFetcher
+from pyjwt_key_fetcher.errors import JWTKeyFetcherError
 
 TENANT_ID = os.environ["ENTRA_TENANT_ID"]
 CLIENT_ID = os.environ["ENTRA_CLIENT_ID"]
@@ -72,36 +79,46 @@ class EntraClaims(BaseModel):
     roles: list[str] = []
     scp: str = ""   # delegated scopes
 
-# ── JWKS key fetching (cache in production with TTL) ──────────────────
-def _fetch_jwks() -> dict:
-    response = httpx.get(JWKS_URI, timeout=10)
-    response.raise_for_status()
-    return response.json()
+# ── JWKS key fetching (cache + rotation handling) ─────────────────────
+key_fetcher = AsyncKeyFetcher(
+    valid_issuers=[ISSUER],
+    static_issuer_config={
+        ISSUER: {
+            "jwks_uri": JWKS_URI,
+        }
+    },
+)
 
-def verify_entra_token(token: str) -> EntraClaims:
-    jwks = _fetch_jwks()   # cache this with a TTL in production
+async def verify_entra_token(
+    security_scopes: SecurityScopes,
+    token: Annotated[str, Depends(entra_oauth2)],
+) -> EntraClaims:
     try:
-        header = jwt.get_unverified_header(token)
-        # Find the matching key from the JWKS
-        key = next(
-            (k for k in jwks["keys"] if k["kid"] == header["kid"]),
-            None,
-        )
-        if not key:
-            raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Unknown signing key")
-        public_key = jwt.algorithms.RSAAlgorithm.from_jwk(key)
+        key_entry = await key_fetcher.get_key(token)
         payload = jwt.decode(
-            token,
-            public_key,
-            algorithms=["RS256"],
+            jwt=token,
             audience=CLIENT_ID,
             issuer=ISSUER,
+            options={"require": ["exp", "iss", "sub"]},
+            **key_entry,
         )
-        return EntraClaims(**payload)
     except jwt.ExpiredSignatureError:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token expired")
-    except jwt.InvalidTokenError as exc:
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, f"Invalid token: {exc}")
+    except (jwt.InvalidTokenError, JWTKeyFetcherError) as exc:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, f"Invalid token: {exc}") from exc
+
+    claims = EntraClaims(**payload)
+
+    if security_scopes.scopes:
+        token_scopes = set(claims.scp.split()) if claims.scp else set()
+        missing_scopes = [scope for scope in security_scopes.scopes if scope not in token_scopes]
+        if missing_scopes:
+            raise HTTPException(
+                status.HTTP_403_FORBIDDEN,
+                f"Missing scopes: {', '.join(missing_scopes)}",
+            )
+
+    return claims
 
 def require_role(role: str):
     """Dependency factory — enforces a specific app role."""
@@ -149,19 +166,21 @@ The `roles` claim in the token is populated automatically by Entra ID.
 
 ## JWKS caching
 
-In production, cache the JWKS response with a TTL (e.g. 1 hour) to avoid fetching it on every request:
+Prefer `AsyncKeyFetcher` over a hand-rolled module-global TTL cache. It keeps issuer configuration and keys cached per issuer, defaults to a 1-hour TTL for up to 32 issuers, and forces a JWKS refresh when it encounters a new `kid` after the library's built-in 5-minute minimum refresh window.
 
 ```python
-import time
+key_fetcher = AsyncKeyFetcher(
+    valid_issuers=[ISSUER],
+    static_issuer_config={
+        ISSUER: {
+            "jwks_uri": JWKS_URI,
+        }
+    },
+    cache_ttl=3600,
+)
 
-_jwks_cache: dict = {}
-_jwks_fetched_at: float = 0.0
-JWKS_TTL = 3600  # seconds
-
-def _fetch_jwks_cached() -> dict:
-    global _jwks_cache, _jwks_fetched_at
-    if time.monotonic() - _jwks_fetched_at > JWKS_TTL:
-        _jwks_cache = httpx.get(JWKS_URI, timeout=10).raise_for_status().json()
-        _jwks_fetched_at = time.monotonic()
-    return _jwks_cache
+key_entry = await key_fetcher.get_key(token)
+payload = jwt.decode(jwt=token, audience=CLIENT_ID, issuer=ISSUER, **key_entry)
 ```
+
+Use `static_issuer_config` when you already know the issuer and its JWKS URL. It skips OpenID discovery on the hot path while still preserving key caching and rotation handling.
