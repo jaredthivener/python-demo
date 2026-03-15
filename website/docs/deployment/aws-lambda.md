@@ -212,6 +212,6 @@ aws lambda put-provisioned-concurrency-config \
 
 ## Next steps
 
-- [ECS Fargate](./aws-ecs-fargate.md) — managed containers, no cold starts
 - [EKS](./aws-eks.md) — Kubernetes with IRSA
+- [ECS Fargate](./aws-ecs-fargate.md) — managed containers, no cold starts
 - [Cloud IAM / Workload Identity](../auth/managed-identity.md) — how the credential chain works across clouds

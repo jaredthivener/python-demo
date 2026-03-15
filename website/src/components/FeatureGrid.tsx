@@ -60,7 +60,7 @@ const FEATURES: Feature[] = [
     title: "Auto OpenAPI 3.1",
     description:
       "Interactive Swagger UI and ReDoc generated from your type annotations — no YAML to maintain. Security schemes auto-wired.",
-    color: "#6A1B9A",
+    color: "#C2185B",
   },
 ];
 

@@ -108,7 +108,7 @@ const config: Config = {
           title: "Deployment",
           items: [
             { label: "Overview", to: "/docs/deployment" },
-            { label: "AWS (Lambda / ECS)", to: "/docs/deployment/aws-lambda" },
+            { label: "AWS (Lambda / EKS)", to: "/docs/deployment/aws-lambda" },
             {
               label: "GCP (Cloud Run / GKE)",
               to: "/docs/deployment/gcp-cloud-run",

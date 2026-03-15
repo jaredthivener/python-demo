@@ -54,7 +54,9 @@ Never install packages without confirmation unless listed in pyproject.toml.
 ## Testing Instructions
 
 - Add tests using pytest (install if needed via uv add pytest).
+- Default to test-driven development for all code changes: define expected behavior first, add or update the relevant test, then implement the code change.
 - Write unit/integration tests for new endpoints.
+- When changing existing behavior, update the relevant test before editing implementation so regressions are caught intentionally.
 - Test structure: `tests/test_main.py` mirroring app logic.
 - Cover:
   - Happy paths
@@ -65,6 +67,14 @@ Never install packages without confirmation unless listed in pyproject.toml.
   pytest  
 
 Aim for high coverage on critical parts like middleware and traffic generator.
+
+## Change Validation Workflow
+
+- Do not treat a code change as complete until the relevant validation has been run successfully.
+- Start with the smallest relevant checks for the change, then run the broader impacted validation suite before finishing.
+- For backend changes, use the repo validation commands: `uv run ruff check .`, `uv run ruff format --check .`, and `uv run pytest`.
+- For website changes, use the docs validation commands in `website/`: `npm run format:check`, `npm run typecheck`, and `npm run build`.
+- Favor small, focused patches that satisfy tests without introducing unrelated refactors.
 
 ## Security Considerations
 - Validate inputs with FastAPI's built-in features (e.g., path params).

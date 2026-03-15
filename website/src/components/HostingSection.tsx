@@ -23,7 +23,7 @@ interface HostingOption {
 const OPTIONS: HostingOption[] = [
   {
     name: "AWS",
-    tagline: "Lambda · ECS Fargate · Elastic Beanstalk",
+    tagline: "Lambda · EKS · Elastic Beanstalk",
     color: "#FF9900",
     logo: "/python-demo/img/aws-logo.svg",
     badge: "Most Adopted",
@@ -34,8 +34,8 @@ const OPTIONS: HostingOption[] = [
         description: "Serverless, pay-per-invocation with IRSA for secrets",
       },
       {
-        label: "ECS Fargate",
-        description: "Managed containers, no nodes to patch",
+        label: "EKS",
+        description: "Kubernetes with IRSA for per-pod IAM",
       },
       {
         label: "Elastic Beanstalk",
@@ -48,7 +48,7 @@ const OPTIONS: HostingOption[] = [
   },
   {
     name: "Google Cloud",
-    tagline: "Cloud Run · GKE · App Engine",
+    tagline: "Cloud Run · App Engine · GKE",
     color: "#34A853",
     logo: "/python-demo/img/gcp-logo.svg",
     badge: "Best Serverless Containers",
@@ -59,12 +59,12 @@ const OPTIONS: HostingOption[] = [
         description: "Container-native serverless, scales to zero",
       },
       {
-        label: "GKE",
-        description: "Autopilot or standard Kubernetes with Workload Identity",
-      },
-      {
         label: "App Engine",
         description: "Managed PaaS with automatic scaling",
+      },
+      {
+        label: "GKE",
+        description: "Autopilot or standard Kubernetes with Workload Identity",
       },
     ],
     bestFor:
@@ -73,7 +73,7 @@ const OPTIONS: HostingOption[] = [
   },
   {
     name: "Azure",
-    tagline: "Functions · AKS · App Service",
+    tagline: "Functions · App Service · AKS",
     color: "#0078D4",
     logo: "/python-demo/img/azure-logo.svg",
     badge: "Deep Microsoft Integration",
@@ -84,12 +84,12 @@ const OPTIONS: HostingOption[] = [
         description: "Serverless with Managed Identity built-in",
       },
       {
-        label: "AKS",
-        description: "Kubernetes with Workload Identity Federation",
-      },
-      {
         label: "App Service",
         description: "PaaS with deployment slots and Key Vault refs",
+      },
+      {
+        label: "AKS",
+        description: "Kubernetes with Workload Identity Federation",
       },
     ],
     bestFor:

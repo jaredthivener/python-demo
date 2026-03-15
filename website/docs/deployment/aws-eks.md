@@ -56,5 +56,5 @@ spec:
 ## Next steps
 
 - [AWS Lambda](./aws-lambda.md) — serverless, pay-per-invocation
-- [ECS Fargate](./aws-ecs-fargate.md) — managed containers, no nodes to patch
 - [Cloud IAM / Workload Identity](../auth/managed-identity.md) — how the credential chain works across clouds
+- [ECS Fargate](./aws-ecs-fargate.md) — managed containers, no nodes to patch

@@ -4,18 +4,18 @@ sidebar_position: 2
 
 # AWS Deployment
 
-Deploy FastAPI to AWS with zero long-lived credentials using IAM Roles for Service Accounts (IRSA) or Lambda execution roles.
+Deploy FastAPI to AWS with zero long-lived credentials using Lambda execution roles, IAM Roles for Service Accounts (IRSA) on EKS, or instance profiles.
 
 ## Choose your target
 
-|                       | Lambda + Mangum                  | ECS Fargate                   | Elastic Beanstalk      |
-| --------------------- | -------------------------------- | ----------------------------- | ---------------------- |
-| **Cost at idle**      | $0 (pay per invocation)          | ~$30+/month                   | ~$20+/month (t3.micro) |
-| **Cold start?**       | Yes (mitigable with provisioned) | No                            | No                     |
-| **IAM auth**          | Lambda execution role            | Task role (ECS task IAM role) | Instance profile       |
-| **Container support** | Yes (container image)            | Native                        | Yes (Docker platform)  |
-| **Custom networking** | VPC Lambda                       | Full VPC                      | VPC                    |
-| **Best for**          | Event-driven / spiky traffic     | Long-running containers       | Monolithic web APIs    |
+|                       | Lambda + Mangum                  | EKS + IRSA                           | Elastic Beanstalk      |
+| --------------------- | -------------------------------- | ------------------------------------ | ---------------------- |
+| **Cost at idle**      | $0 (pay per invocation)          | ~$100+/month+                        | ~$20+/month (t3.micro) |
+| **Cold start?**       | Yes (mitigable with provisioned) | No                                   | No                     |
+| **IAM auth**          | Lambda execution role            | IAM Roles for Service Accounts       | Instance profile       |
+| **Container support** | Yes (container image)            | Native                               | Yes (Docker platform)  |
+| **Custom networking** | VPC Lambda                       | Full VPC                             | VPC                    |
+| **Best for**          | Event-driven / spiky traffic     | Kubernetes / multi-service platforms | Monolithic web APIs    |
 
 ---
 
@@ -115,9 +115,56 @@ def get_secret(secret_name: str) -> dict:
 
 ---
 
-## Option B — ECS Fargate with Task Role
+## Option B — IRSA on EKS
 
-Fargate runs containers without managing EC2 instances. Each task gets an IAM role via ECS Task IAM Roles (IRSA equivalent for ECS).
+If you're running on Kubernetes (EKS), use **IAM Roles for Service Accounts (IRSA)** to give each pod its own IAM role — no node-level credentials.
+
+### Enable IRSA on your cluster
+
+```bash
+eksctl utils associate-iam-oidc-provider \
+  --cluster my-cluster \
+  --approve
+```
+
+### Create the IAM role
+
+```bash
+eksctl create iamserviceaccount \
+  --name fastapi-sa \
+  --namespace default \
+  --cluster my-cluster \
+  --attach-policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess \
+  --approve \
+  --override-existing-serviceaccounts
+```
+
+### Reference the service account in your pod
+
+```yaml
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-books
+spec:
+  template:
+    spec:
+      serviceAccountName: fastapi-sa # <-- IRSA annotation lives here
+      containers:
+        - name: fastapi
+          image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/fastapi-books:latest
+          ports:
+            - containerPort: 8000
+```
+
+`boto3` automatically picks up the IRSA token — your code is identical to the Lambda example above.
+
+---
+
+## Option C — ECS Fargate with Task Role
+
+Fargate runs containers without managing EC2 instances. Each task gets an IAM role via ECS Task IAM Roles.
 
 ### Task definition with task role
 
@@ -194,53 +241,6 @@ aws ecs create-service \
   --desired-count 2 \
   --network-configuration "awsvpcConfiguration={subnets=[subnet-abc123],securityGroups=[sg-xyz456],assignPublicIp=ENABLED}"
 ```
-
----
-
-## Option C — IRSA on EKS
-
-If you're running on Kubernetes (EKS), use **IAM Roles for Service Accounts (IRSA)** to give each pod its own IAM role — no node-level credentials.
-
-### Enable IRSA on your cluster
-
-```bash
-eksctl utils associate-iam-oidc-provider \
-  --cluster my-cluster \
-  --approve
-```
-
-### Create the IAM role
-
-```bash
-eksctl create iamserviceaccount \
-  --name fastapi-sa \
-  --namespace default \
-  --cluster my-cluster \
-  --attach-policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess \
-  --approve \
-  --override-existing-serviceaccounts
-```
-
-### Reference the service account in your pod
-
-```yaml
-# deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: fastapi-books
-spec:
-  template:
-    spec:
-      serviceAccountName: fastapi-sa # <-- IRSA annotation lives here
-      containers:
-        - name: fastapi
-          image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/fastapi-books:latest
-          ports:
-            - containerPort: 8000
-```
-
-`boto3` automatically picks up the IRSA token — your code is identical to the Lambda example above.
 
 ---
 

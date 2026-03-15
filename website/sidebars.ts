@@ -51,8 +51,8 @@ const sidebars: SidebarsConfig = {
           collapsed: false,
           items: [
             "deployment/gcp-cloud-run",
-            "deployment/gcp-gke",
             "deployment/gcp-app-engine",
+            "deployment/gcp-gke",
           ],
         },
         {
@@ -61,8 +61,8 @@ const sidebars: SidebarsConfig = {
           collapsed: false,
           items: [
             "deployment/azure-functions",
-            "deployment/aks",
             "deployment/app-service",
+            "deployment/aks",
           ],
         },
       ],

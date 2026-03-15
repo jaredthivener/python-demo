@@ -8,14 +8,14 @@ Deploy FastAPI to Google Cloud with zero long-lived credentials using Workload I
 
 ## Choose your target
 
-|                       | Cloud Run                          | GKE + Workload Identity         | App Engine         |
-| --------------------- | ---------------------------------- | ------------------------------- | ------------------ |
-| **Cost at idle**      | $0 (scale to zero)                 | ~$100+/month (node pool)        | ~$0 (F1 free tier) |
-| **Cold start?**       | Yes (mitigable with min-instances) | No                              | Yes                |
-| **IAM auth**          | Service account binding            | Workload Identity               | Service account    |
-| **Container support** | Native                             | Native                          | Custom runtime     |
-| **Custom networking** | VPC connector                      | Full VPC                        | Limited            |
-| **Best for**          | Serverless containers              | Microservices / complex routing | Simple web apps    |
+|                       | Cloud Run                          | App Engine         | GKE + Workload Identity         |
+| --------------------- | ---------------------------------- | ------------------ | ------------------------------- |
+| **Cost at idle**      | $0 (scale to zero)                 | ~$0 (F1 free tier) | ~$100+/month (node pool)        |
+| **Cold start?**       | Yes (mitigable with min-instances) | Yes                | No                              |
+| **IAM auth**          | Service account binding            | Service account    | Workload Identity               |
+| **Container support** | Native                             | Custom runtime     | Native                          |
+| **Custom networking** | VPC connector                      | Limited            | Full VPC                        |
+| **Best for**          | Serverless containers              | Simple web apps    | Microservices / complex routing |
 
 ---
 
@@ -95,7 +95,34 @@ def get_secret(secret_id: str) -> str:
 
 ---
 
-## Option B — GKE with Workload Identity
+## Option B — App Engine
+
+App Engine Standard uses the default App Engine service account bound to your app. Useful for simple APIs that don't need custom networking.
+
+```yaml
+# app.yaml
+runtime: python313
+entrypoint: uvicorn demo.main:app --host 0.0.0.0 --port $PORT
+
+env_variables:
+  GCP_PROJECT: "my-project"
+```
+
+```bash
+gcloud app deploy
+```
+
+Grant the App Engine default service account the roles it needs:
+
+```bash
+gcloud projects add-iam-policy-binding my-project \
+  --member "serviceAccount:my-project@appspot.gserviceaccount.com" \
+  --role "roles/secretmanager.secretAccessor"
+```
+
+---
+
+## Option C — GKE with Workload Identity
 
 GKE Workload Identity maps a Kubernetes service account to a Google Cloud service account, giving each pod its own IAM identity — no node-level credentials.
 
@@ -162,33 +189,6 @@ spec:
 ```
 
 ADC inside the pod automatically uses the Workload Identity token — your Python code is identical to the Cloud Run example above.
-
----
-
-## Option C — App Engine
-
-App Engine Standard uses the default App Engine service account bound to your app. Useful for simple APIs that don't need custom networking.
-
-```yaml
-# app.yaml
-runtime: python313
-entrypoint: uvicorn demo.main:app --host 0.0.0.0 --port $PORT
-
-env_variables:
-  GCP_PROJECT: "my-project"
-```
-
-```bash
-gcloud app deploy
-```
-
-Grant the App Engine default service account the roles it needs:
-
-```bash
-gcloud projects add-iam-policy-binding my-project \
-  --member "serviceAccount:my-project@appspot.gserviceaccount.com" \
-  --role "roles/secretmanager.secretAccessor"
-```
 
 ---
 

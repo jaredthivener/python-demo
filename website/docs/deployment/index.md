@@ -27,12 +27,12 @@ FastAPI deploys to all major cloud providers with **zero long-lived credentials*
 
 ### Container orchestration
 
-|                           | AWS ECS Fargate         | GKE + Workload Identity | Azure AKS             |
-| ------------------------- | ----------------------- | ----------------------- | --------------------- |
-| **Cost at idle**          | ~$30+/month             | ~$100+/month            | ~$150+/month          |
-| **IAM auth**              | ECS Task Role           | GKE Workload Identity   | AKS Workload Identity |
-| **Managed control plane** | Yes                     | Yes                     | Yes                   |
-| **Best for**              | Long-running containers | Complex microservices   | Microsoft-stack apps  |
+|                           | AWS EKS + IRSA                 | GKE + Workload Identity | Azure AKS             |
+| ------------------------- | ------------------------------ | ----------------------- | --------------------- |
+| **Cost at idle**          | ~$100+/month+                  | ~$100+/month            | ~$150+/month          |
+| **IAM auth**              | IAM Roles for Service Accounts | GKE Workload Identity   | AKS Workload Identity |
+| **Managed control plane** | Yes                            | Yes                     | Yes                   |
+| **Best for**              | Kubernetes on AWS              | Complex microservices   | Microsoft-stack apps  |
 
 ### PaaS web hosting
 
@@ -68,7 +68,7 @@ CMD ["uv", "run", "uvicorn", "demo.main:app", "--host", "0.0.0.0", "--port", "80
 
 ## Pick a guide
 
-- [AWS](./aws.md) — Lambda + IRSA + ECS Fargate
+- [AWS](./aws.md) — Lambda + EKS + Elastic Beanstalk
 - [GCP](./gcp.md) — Cloud Run + Workload Identity + GKE
 - [Azure Functions](./azure-functions.md) — serverless, pay-per-invocation
 - [AKS](./aks.md) — Kubernetes, full control
