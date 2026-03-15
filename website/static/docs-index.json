@@ -135,7 +135,7 @@
       "sourcePath": "website/docs/deployment/aws.md",
       "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/deployment/aws.md",
       "priority": "medium",
-      "summary": "Deploy FastAPI to AWS with zero long-lived credentials using IAM Roles for Service Accounts (IRSA) or Lambda execution roles."
+      "summary": "Deploy FastAPI to AWS with zero long-lived credentials using Lambda execution roles, IAM Roles for Service Accounts (IRSA) on EKS, or instance profiles."
     },
     {
       "id": "deployment-azure-functions",

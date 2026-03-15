@@ -118,16 +118,20 @@ uv run pytest
 ## Quality checks
 
 ```bash
-uv run ruff check .
-uv run ruff format --check .
-cd website && npm run format:check && npm run typecheck && npm run build
+make check
+```
+
+If you want to run the split CI paths locally:
+
+```bash
+make check-backend
+make check-docs
 ```
 
 To apply formatting locally:
 
 ```bash
-uv run ruff format .
-cd website && npm run format
+make fix
 ```
 
 ## Logging
@@ -178,6 +182,8 @@ To refresh the checked-in machine-readable artifacts after changing routes, mode
 uv run python scripts/generate_machine_artifacts.py
 ```
 
+For normal development, prefer `make fix` instead of calling the generator by hand. It regenerates artifacts, runs formatters in the correct order, regenerates again after docs formatting, and then validates the repo.
+
 For the full automation loop, use one of these entrypoints:
 
 ```bash
@@ -197,6 +203,8 @@ uv run python scripts/repo_loop.py check
 Workflow split:
 
 - `CI` stays read-only and fails on drift.
+- The `backend` CI job validates Python code only.
+- The `docs` CI job owns generated artifact verification plus site formatting, typechecking, and build checks.
 - `Autofix Repo Standards` runs on pushes to `main`, applies `make fix`, and opens or updates an automation PR instead of pushing directly to `main`.
 
 See `scripts/README.md` for the script-level details and how the loop fits into the repo.

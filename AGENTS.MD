@@ -72,8 +72,11 @@ Aim for high coverage on critical parts like middleware and traffic generator.
 
 - Do not treat a code change as complete until the relevant validation has been run successfully.
 - Start with the smallest relevant checks for the change, then run the broader impacted validation suite before finishing.
+- After changing docs, routes, models, or site metadata, run `make fix` so generated machine-readable artifacts are refreshed in the correct order before validation.
 - For backend changes, use the repo validation commands: `uv run ruff check .`, `uv run ruff format --check .`, and `uv run pytest`.
-- For website changes, use the docs validation commands in `website/`: `npm run format:check`, `npm run typecheck`, and `npm run build`.
+- For backend-only CI parity, use `make check-backend`.
+- For docs/site CI parity, use `make check-docs`.
+- For full repo CI parity, use `make check`.
 - Favor small, focused patches that satisfy tests without introducing unrelated refactors.
 
 ## Security Considerations

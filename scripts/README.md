@@ -46,6 +46,8 @@ Commands:
 ```bash
 uv run python scripts/repo_loop.py fix
 uv run python scripts/repo_loop.py check
+uv run python scripts/repo_loop.py check --scope backend
+uv run python scripts/repo_loop.py check --scope docs
 ```
 
 ## Repo integration
@@ -58,12 +60,15 @@ Top-level shortcuts are provided by the repo `Makefile`:
 make fix
 make check
 make artifacts
+make check-backend
+make check-docs
 ```
 
 Recommended usage:
 
 - Run `make fix` before pushing when you changed docs, metadata, or API routes.
 - Run `make check` when you want the same read-only validation path used by CI.
+- Run `make check-backend` or `make check-docs` when you want to match a single CI job locally.
 
 ### CI and GitHub Actions
 
@@ -73,6 +78,8 @@ The repo uses two different workflow roles:
 - `.github/workflows/autofix.yml` is the write-enabled automation loop. It runs on pushes to `main`, applies the fix loop, and opens or updates an automation pull request with the resulting changes.
 
 This split is deliberate. Validation workflows should stay predictable, while write-enabled automation should be isolated so it does not mutate pull request branches or create confusing side effects during review.
+
+The generated artifact drift check lives with the docs/site validation path because `docs-index.json` and `llms.txt` are derived from documentation content as well as API metadata. That keeps docs-originated failures out of the backend-only job.
 
 ### Deployment relationship
 
