@@ -40,8 +40,8 @@ const config: Config = {
     image: "img/social-card.png",
     colorMode: {
       defaultMode: "dark",
-      disableSwitch: false,
-      respectPrefersColorScheme: true,
+      disableSwitch: true,
+      respectPrefersColorScheme: false,
     },
     navbar: {
       title: "",
