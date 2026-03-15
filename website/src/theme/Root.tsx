@@ -10,7 +10,15 @@ export default function Root({
 }: {
   children: React.ReactNode;
 }): React.ReactElement {
-  const [colorMode, setColorMode] = useState<"light" | "dark">("light");
+  const [colorMode, setColorMode] = useState<"light" | "dark">(() => {
+    if (typeof document === "undefined") {
+      return "dark";
+    }
+
+    return document.documentElement.getAttribute("data-theme") === "light"
+      ? "light"
+      : "dark";
+  });
 
   useEffect(() => {
     const getMode = (): "light" | "dark" =>

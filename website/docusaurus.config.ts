@@ -14,6 +14,12 @@ const config: Config = {
   organizationName: "jaredthivener",
   projectName: "python-demo",
   trailingSlash: false,
+  future: {
+    experimental_storage: {
+      type: "localStorage",
+      namespace: true,
+    },
+  },
   onBrokenLinks: "throw",
   markdown: {
     hooks: { onBrokenMarkdownLinks: "warn" },
