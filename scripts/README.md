@@ -62,6 +62,7 @@ make check
 make artifacts
 make check-backend
 make check-docs
+make install-hooks
 ```
 
 Recommended usage:
@@ -69,6 +70,7 @@ Recommended usage:
 - Run `make fix` before pushing when you changed docs, metadata, or API routes.
 - Run `make check` when you want the same read-only validation path used by CI.
 - Run `make check-backend` or `make check-docs` when you want to match a single CI job locally.
+- Run `make install-hooks` once per clone to enforce `make fix` automatically before commits.
 
 ### CI and GitHub Actions
 

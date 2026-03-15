@@ -1,8 +1,13 @@
-.PHONY: fix check check-backend check-docs artifacts
+.PHONY: fix check check-backend check-docs artifacts install-hooks
 
 # Refresh the checked-in machine-readable docs and API artifacts only.
 artifacts:
 	uv run python scripts/generate_machine_artifacts.py
+
+# Install local git hooks that enforce the repo loop pre-commit.
+install-hooks:
+	git config core.hooksPath .githooks
+	@echo "Installed git hooks path: .githooks (pre-commit + pre-push)"
 
 # Auto-fix formatting and generated files, then run the full validation loop.
 fix:

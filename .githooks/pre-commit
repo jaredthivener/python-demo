@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+echo "[pre-commit] Running repo fix loop (make fix)..."
+make fix
+
+echo "[pre-commit] Running full validation loop (make check)..."
+make check
+
+echo "[pre-commit] Staging updates from fix loop..."
+git add -A

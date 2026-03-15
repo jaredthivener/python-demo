@@ -62,6 +62,8 @@ jobs:
         run: make fix
 
       - name: Create autofix pull request
+        id: create_autofix_pr
+        continue-on-error: true
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -88,3 +90,9 @@ jobs:
           labels: |
             automation
             housekeeping
+
+      - name: Report autofix PR result
+        if: steps.create_autofix_pr.outcome == 'failure'
+        run: |
+          echo "Autofix changes were generated, but GitHub Actions could not create a PR."
+          echo "Enable Actions PR creation permissions or create a PR from automation/repo-autofix manually."

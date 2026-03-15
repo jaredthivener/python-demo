@@ -132,6 +132,16 @@ To apply formatting locally:
 
 ```bash
 make fix
+
+Install local git hooks once per clone to automatically run the repo fix loop
+before every commit:
+
+```bash
+make install-hooks
+```
+
+With hooks installed, commits will run `make fix` and stage updated files so
+formatting and generated artifacts stay aligned with CI.
 ```
 
 ## Logging

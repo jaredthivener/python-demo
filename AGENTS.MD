@@ -71,6 +71,8 @@ Aim for high coverage on critical parts like middleware and traffic generator.
 ## Change Validation Workflow
 
 - Do not treat a code change as complete until the relevant validation has been run successfully.
+- Before every commit and before every push, run the full CI-parity suite with `make check` and require it to pass.
+- `make check` includes docs Prettier checks (`npm run format:check`), so formatting failures must be fixed locally before commit/push.
 - Start with the smallest relevant checks for the change, then run the broader impacted validation suite before finishing.
 - After changing docs, routes, models, or site metadata, run `make fix` so generated machine-readable artifacts are refreshed in the correct order before validation.
 - For backend changes, use the repo validation commands: `uv run ruff check .`, `uv run ruff format --check .`, and `uv run pytest`.
