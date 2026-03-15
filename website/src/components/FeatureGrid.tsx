@@ -1,62 +1,113 @@
 import React from "react";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import KeyIcon from "@mui/icons-material/Key";
-import CloudIcon from "@mui/icons-material/Cloud";
-import BusinessIcon from "@mui/icons-material/Business";
-import SecurityIcon from "@mui/icons-material/Security";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ApiIcon from "@mui/icons-material/Api";
 
 interface Feature {
-  icon: React.ReactElement;
+  icon: "key" | "cloud" | "building" | "shield" | "check" | "api";
   title: string;
   description: string;
   color: string;
 }
 
+function FeatureIcon({
+  kind,
+}: {
+  kind: Feature["icon"];
+}): React.ReactElement {
+  switch (kind) {
+    case "key":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="hp-icon-svg">
+          <path
+            d="M14.5 10a4.5 4.5 0 1 0-1.3 3.2L16 16h2v2h2v2h2v-2.7L17 12.4A4.48 4.48 0 0 0 14.5 10Z"
+            fill="currentColor"
+          />
+        </svg>
+      );
+    case "cloud":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="hp-icon-svg">
+          <path
+            d="M7.5 19A4.5 4.5 0 0 1 7 10a6 6 0 0 1 11.5 1.6A3.8 3.8 0 1 1 18.8 19H7.5Z"
+            fill="currentColor"
+          />
+        </svg>
+      );
+    case "building":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="hp-icon-svg">
+          <path
+            d="M4 20V4h7v16H4Zm2-2h1v-2H6v2Zm0-4h1v-2H6v2Zm0-4h1V8H6v2Zm3 8h1v-2H9v2Zm0-4h1v-2H9v2Zm0-4h1V8H9v2Zm4 10V9l7-2v13h-7Zm2-2h1v-2h-1v2Zm0-4h1v-2h-1v2Zm3 4h1v-2h-1v2Zm0-4h1v-2h-1v2Z"
+            fill="currentColor"
+          />
+        </svg>
+      );
+    case "shield":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="hp-icon-svg">
+          <path
+            d="M12 3 5 6v6c0 4.9 2.9 7.9 7 9 4.1-1.1 7-4.1 7-9V6l-7-3Zm-1 12-3-3 1.4-1.4 1.6 1.6 3.6-3.6L16 10l-5 5Z"
+            fill="currentColor"
+          />
+        </svg>
+      );
+    case "check":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="hp-icon-svg">
+          <path
+            d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm-1.2 14.6L6.7 12.5l1.4-1.4 2.7 2.7 5-5 1.4 1.4-6.4 6.4Z"
+            fill="currentColor"
+          />
+        </svg>
+      );
+    case "api":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="hp-icon-svg">
+          <path
+            d="M8.7 17.9 2.8 12l5.9-5.9L10.1 7.5 5.6 12l4.5 4.5-1.4 1.4Zm6.6 0-1.4-1.4 4.5-4.5-4.5-4.5 1.4-1.4 5.9 5.9-5.9 5.9ZM9.6 20l3.2-16h1.6l-3.2 16H9.6Z"
+            fill="currentColor"
+          />
+        </svg>
+      );
+  }
+}
+
 const FEATURES: Feature[] = [
   {
-    icon: <KeyIcon fontSize="medium" />,
+    icon: "key",
     title: "JWT Bearer Auth",
     description:
       "Stateless, self-contained tokens with short expiry. Verify cryptographically — no DB round-trip per request. Powered by HS256 or RS256.",
     color: "#1565C0",
   },
   {
-    icon: <CloudIcon fontSize="medium" />,
+    icon: "cloud",
     title: "Cloud IAM / Workload Identity",
     description:
       "Zero secrets in code. IRSA on AWS, Workload Identity on GCP, Managed Identity on Azure. Your app gets short-lived tokens automatically from the platform.",
     color: "#0097A7",
   },
   {
-    icon: <BusinessIcon fontSize="medium" />,
+    icon: "building",
     title: "Enterprise SSO",
     description:
       "Cognito (AWS), Google Identity (GCP), or Microsoft Entra ID — enterprise login with MFA, conditional access, and app roles. JWKS-validated RS256 tokens.",
     color: "#68217A",
   },
   {
-    icon: <SecurityIcon fontSize="medium" />,
+    icon: "shield",
     title: "RBAC Scopes",
     description:
       "Fine-grained authorization with OAuth2 scopes. Use Security() — not just Depends() — to cleanly enforce access per endpoint.",
     color: "#E65100",
   },
   {
-    icon: <CheckCircleIcon fontSize="medium" />,
+    icon: "check",
     title: "Pydantic v2 Models",
     description:
       "Separate request/response models so internal fields never leak. model_dump(exclude_unset=True) for clean partial updates.",
     color: "#2E7D32",
   },
   {
-    icon: <ApiIcon fontSize="medium" />,
+    icon: "api",
     title: "Auto OpenAPI 3.1",
     description:
       "Interactive Swagger UI and ReDoc generated from your type annotations — no YAML to maintain. Security schemes auto-wired.",
@@ -66,103 +117,45 @@ const FEATURES: Feature[] = [
 
 export default function FeatureGrid(): React.ReactElement {
   return (
-    <Box
-      component="section"
-      sx={{
-        py: { xs: 10, md: 14 },
-        bgcolor: "background.default",
-      }}
-    >
-      <Container maxWidth="lg">
-        <Box sx={{ textAlign: "center", mb: 8 }}>
-          <Typography
-            variant="overline"
-            sx={{
-              color: "primary.main",
-              fontWeight: 700,
-              letterSpacing: "0.12em",
-              fontSize: "0.75rem",
-            }}
-          >
-            What The Docs Cover
-          </Typography>
-          <Typography
-            variant="h2"
-            sx={{
-              fontWeight: 800,
-              letterSpacing: "-0.03em",
-              mt: 1,
-              fontSize: { xs: "2rem", md: "2.75rem" },
-            }}
-          >
-            Concepts first, implementation second
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              mt: 2,
-              color: "text.secondary",
-              maxWidth: 560,
-              mx: "auto",
-              lineHeight: 1.7,
-            }}
-          >
+    <section className="hp-section hp-surface">
+      <div className="container">
+        <div className="hp-section-header">
+          <p className="hp-overline">What The Docs Cover</p>
+          <h2 className="hp-title">Concepts first, implementation second</h2>
+          <p className="hp-subtitle">
             Six core topics covered by the documentation. The live demo app
             implements the API-focused pieces and stays intentionally small.
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
-        <Grid container spacing={3}>
+        <div className="hp-grid hp-grid--three">
           {FEATURES.map((feature) => (
-            <Grid key={feature.title} size={{ xs: 12, sm: 6, md: 4 }}>
-              <Card
-                sx={{
-                  height: "100%",
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: "16px",
-                  transition:
-                    "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
-                  "&:hover": {
-                    transform: "translateY(-4px)",
-                    boxShadow: `0 12px 40px rgba(0,0,0,0.1)`,
-                    borderColor: feature.color,
-                  },
-                }}
-                elevation={0}
+            <article
+              key={feature.title}
+              className="hp-card"
+              style={{
+                borderColor: "var(--ifm-color-emphasis-200)",
+                ["--hp-accent" as string]: feature.color,
+              }}
+            >
+              <div className="hp-card-inner"
               >
-                <CardContent sx={{ p: 3.5 }}>
-                  <Box
-                    sx={{
-                      display: "inline-flex",
-                      p: 1.5,
-                      borderRadius: "12px",
-                      bgcolor: `${feature.color}14`,
-                      color: feature.color,
-                      mb: 2.5,
-                    }}
-                  >
-                    {feature.icon}
-                  </Box>
-                  <Typography
-                    variant="h6"
-                    sx={{ fontWeight: 700, mb: 1.25, fontSize: "1.05rem" }}
-                  >
-                    {feature.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ lineHeight: 1.65 }}
-                  >
-                    {feature.description}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+                <span
+                  className="hp-icon-badge"
+                  style={{
+                    backgroundColor: `${feature.color}14`,
+                    color: feature.color,
+                  }}
+                >
+                  <FeatureIcon kind={feature.icon} />
+                </span>
+                <h3 className="hp-card-title">{feature.title}</h3>
+                <p className="hp-card-copy">{feature.description}</p>
+              </div>
+            </article>
           ))}
-        </Grid>
-      </Container>
-    </Box>
+        </div>
+      </div>
+    </section>
   );
 }

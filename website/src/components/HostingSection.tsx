@@ -1,12 +1,4 @@
 import React from "react";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Chip from "@mui/material/Chip";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import CheckIcon from "@mui/icons-material/Check";
 
 interface HostingOption {
   name: string;
@@ -100,248 +92,72 @@ const OPTIONS: HostingOption[] = [
 
 export default function HostingSection(): React.ReactElement {
   return (
-    <Box
-      component="section"
-      sx={{
-        py: { xs: 10, md: 14 },
-        bgcolor: "background.default",
-      }}
-    >
-      <Container maxWidth="lg">
-        <Box sx={{ textAlign: "center", mb: 8 }}>
-          <Typography
-            variant="overline"
-            sx={{
-              color: "primary.main",
-              fontWeight: 700,
-              letterSpacing: "0.12em",
-              fontSize: "0.75rem",
-            }}
-          >
-            Deploy Anywhere
-          </Typography>
-          <Typography
-            variant="h2"
-            sx={{
-              fontWeight: 800,
-              letterSpacing: "-0.03em",
-              mt: 1,
-              fontSize: { xs: "2rem", md: "2.75rem" },
-            }}
-          >
-            Pick your cloud provider
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              mt: 2,
-              color: "text.secondary",
-              maxWidth: 560,
-              mx: "auto",
-              lineHeight: 1.7,
-            }}
-          >
+    <section className="hp-section hp-surface">
+      <div className="container">
+        <div className="hp-section-header">
+          <p className="hp-overline">Deploy Anywhere</p>
+          <h2 className="hp-title">Pick your cloud provider</h2>
+          <p className="hp-subtitle">
             All targets support platform-native IAM — no long-lived credentials
             stored anywhere in your deployment pipeline.
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
-        <Grid container spacing={3}>
+        <div className="hp-grid hp-grid--three">
           {OPTIONS.map((opt) => (
-            <Grid key={opt.name} size={{ xs: 12, md: 4 }}>
-              <Card
-                component="a"
+            <a
+              key={opt.name}
                 href={opt.href}
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  textDecoration: "none",
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                  transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                  "&:hover": {
-                    transform: "translateY(-4px)",
-                    boxShadow: `0 16px 48px ${opt.color}33`,
-                    textDecoration: "none",
-                  },
-                }}
-                elevation={0}
-              >
-                {/* Cloud-coloured header band */}
-                <Box
-                  sx={{
-                    bgcolor: opt.color,
-                    px: 3.5,
-                    pt: 2.5,
-                    pb: 2.5,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 1.5,
-                  }}
-                >
-                  {/* Top row: logo + name on left, badge pinned to right */}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      justifyContent: "space-between",
-                      gap: 1,
-                    }}
-                  >
-                    <Box
-                      sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
-                    >
-                      <Box
-                        component="img"
-                        src={opt.logo}
-                        alt={`${opt.name} logo`}
-                        sx={{
-                          width: 36,
-                          height: 36,
-                          objectFit: "contain",
-                          flexShrink: 0,
-                        }}
-                      />
-                      <Typography
-                        variant="h5"
-                        sx={{
-                          fontWeight: 800,
-                          color: "white",
-                          lineHeight: 1.1,
-                          fontSize: "1.25rem",
-                        }}
-                      >
-                        {opt.name}
-                      </Typography>
-                    </Box>
-                    <Chip
-                      label={opt.badge}
-                      size="small"
-                      sx={{
-                        flexShrink: 0,
-                        bgcolor: opt.badgeColor,
-                        color: "white",
-                        fontWeight: 700,
-                        fontSize: "0.65rem",
-                        letterSpacing: "0.02em",
-                        border: "none",
-                        boxShadow: `0 0 8px ${opt.badgeColor}cc, 0 0 18px ${opt.badgeColor}88, 0 0 32px ${opt.badgeColor}44`,
-                        "& .MuiChip-label": { px: 1.25 },
-                      }}
+                className="hp-card hp-card--link hp-hosting-card"
+                style={{ ["--hp-accent" as string]: opt.color }}
+            >
+              <div className="hp-hosting-band" style={{ backgroundColor: opt.color }}>
+                <div className="hp-hosting-top">
+                  <div className="hp-hosting-brand">
+                    <img
+                      src={opt.logo}
+                      alt={`${opt.name} logo`}
+                      className="hp-hosting-logo"
                     />
-                  </Box>
-                  {/* Tagline row */}
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: "rgba(255,255,255,0.85)",
-                      fontSize: "0.75rem",
-                      lineHeight: 1.4,
-                    }}
+                    <h3 className="hp-hosting-name">{opt.name}</h3>
+                  </div>
+                  <span
+                    className="hp-chip hp-chip--solid"
+                    style={{ backgroundColor: opt.badgeColor }}
                   >
-                    {opt.tagline}
-                  </Typography>
-                </Box>
+                    {opt.badge}
+                  </span>
+                </div>
+                <p className="hp-hosting-tagline">{opt.tagline}</p>
+              </div>
 
-                <CardContent
-                  sx={{
-                    p: 3.5,
-                    flex: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 1.5,
-                      flex: 1,
-                    }}
-                  >
-                    {opt.services.map((svc) => (
-                      <Box
-                        key={svc.label}
-                        sx={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          gap: 1.25,
-                        }}
-                      >
-                        <CheckIcon
-                          sx={{
-                            fontSize: "1rem",
-                            color: opt.color,
-                            mt: "3px",
-                            flexShrink: 0,
-                          }}
-                        />
-                        <Box>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontWeight: 600, lineHeight: 1.3 }}
-                          >
-                            {svc.label}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ lineHeight: 1.55, fontSize: "0.8rem" }}
-                          >
-                            {svc.description}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    ))}
-                  </Box>
+              <div className="hp-card-inner hp-hosting-inner">
+                <div className="hp-services">
+                  {opt.services.map((svc) => (
+                    <div key={svc.label} className="hp-service-item">
+                      <span className="hp-service-check" style={{ color: opt.color }}>
+                        ✓
+                      </span>
+                      <div>
+                        <p className="hp-service-label">{svc.label}</p>
+                        <p className="hp-service-copy">{svc.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
-                  <Box
-                    sx={{
-                      mt: 3,
-                      pt: 2.5,
-                      borderTop: "1px solid",
-                      borderColor: "divider",
-                    }}
-                  >
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        fontWeight: 600,
-                        color: "text.secondary",
-                        display: "block",
-                        mb: 0.5,
-                      }}
-                    >
-                      BEST FOR
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ lineHeight: 1.55 }}
-                    >
-                      {opt.bestFor}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        mt: 2,
-                        display: "block",
-                        color: opt.color,
-                        fontWeight: 600,
-                      }}
-                    >
-                      Deployment guide →
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
+                <div className="hp-hosting-footer">
+                  <p className="hp-hosting-bestfor-label">BEST FOR</p>
+                  <p className="hp-hosting-bestfor-copy">{opt.bestFor}</p>
+                  <span className="hp-cta" style={{ color: opt.color }}>
+                    Deployment guide →
+                  </span>
+                </div>
+              </div>
+            </a>
           ))}
-        </Grid>
-      </Container>
-    </Box>
+        </div>
+      </div>
+    </section>
   );
 }

@@ -1,20 +1,8 @@
 import React from "react";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Chip from "@mui/material/Chip";
-import Container from "@mui/material/Container";
-import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import KeyIcon from "@mui/icons-material/Key";
-import CloudQueueIcon from "@mui/icons-material/CloudQueue";
-import CorporateFareIcon from "@mui/icons-material/CorporateFare";
-import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 
 interface Pattern {
   number: string;
-  icon: React.ReactElement;
+  icon: "key" | "cloud" | "enterprise";
   label: string;
   title: string;
   color: string;
@@ -23,10 +11,46 @@ interface Pattern {
   href: string;
 }
 
+function PatternIcon({
+  kind,
+}: {
+  kind: Pattern["icon"];
+}): React.ReactElement {
+  switch (kind) {
+    case "key":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="hp-icon-svg">
+          <path
+            d="M14.5 10a4.5 4.5 0 1 0-1.3 3.2L16 16h2v2h2v2h2v-2.7L17 12.4A4.48 4.48 0 0 0 14.5 10Z"
+            fill="currentColor"
+          />
+        </svg>
+      );
+    case "cloud":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="hp-icon-svg">
+          <path
+            d="M7.5 19A4.5 4.5 0 0 1 7 10a6 6 0 0 1 11.5 1.6A3.8 3.8 0 1 1 18.8 19H7.5Z"
+            fill="currentColor"
+          />
+        </svg>
+      );
+    case "enterprise":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="hp-icon-svg">
+          <path
+            d="M4 20V4h7v16H4Zm2-2h1v-2H6v2Zm0-4h1v-2H6v2Zm0-4h1V8H6v2Zm3 8h1v-2H9v2Zm0-4h1v-2H9v2Zm0-4h1V8H9v2Zm4 10V9l7-2v13h-7Zm2-2h1v-2h-1v2Zm0-4h1v-2h-1v2Zm3 4h1v-2h-1v2Zm0-4h1v-2h-1v2Z"
+            fill="currentColor"
+          />
+        </svg>
+      );
+  }
+}
+
 const PATTERNS: Pattern[] = [
   {
     number: "01",
-    icon: <KeyIcon />,
+    icon: "key",
     label: "User-facing Auth",
     title: "JWT Bearer",
     color: "#1565C0",
@@ -41,7 +65,7 @@ const PATTERNS: Pattern[] = [
   },
   {
     number: "02",
-    icon: <CloudQueueIcon />,
+    icon: "cloud",
     label: "Outbound Service Auth",
     title: "Cloud IAM / Workload Identity",
     color: "#0097A7",
@@ -56,7 +80,7 @@ const PATTERNS: Pattern[] = [
   },
   {
     number: "03",
-    icon: <CorporateFareIcon />,
+    icon: "enterprise",
     label: "Enterprise SSO",
     title: "Enterprise IdP",
     color: "#68217A",
@@ -73,219 +97,78 @@ const PATTERNS: Pattern[] = [
 
 export default function AuthPatternsSection(): React.ReactElement {
   return (
-    <Box
-      component="section"
-      sx={{
-        py: { xs: 10, md: 14 },
-        bgcolor: "background.default",
-        borderTop: "1px solid",
-        borderBottom: "1px solid",
-        borderColor: "divider",
-      }}
-    >
-      <Container maxWidth="lg">
-        <Box sx={{ textAlign: "center", mb: 8 }}>
-          <Typography
-            variant="overline"
-            sx={{
-              color: "primary.main",
-              fontWeight: 700,
-              letterSpacing: "0.12em",
-              fontSize: "0.75rem",
-            }}
-          >
-            The Big Picture
-          </Typography>
-          <Typography
-            variant="h2"
-            sx={{
-              fontWeight: 800,
-              letterSpacing: "-0.03em",
-              mt: 1,
-              fontSize: { xs: "2rem", md: "2.75rem" },
-            }}
-          >
-            Three auth patterns, one decision
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              mt: 2,
-              color: "text.secondary",
-              maxWidth: 600,
-              mx: "auto",
-              lineHeight: 1.7,
-            }}
-          >
+    <section className="hp-section hp-surface hp-framed">
+      <div className="container">
+        <div className="hp-section-header">
+          <p className="hp-overline">The Big Picture</p>
+          <h2 className="hp-title">Three auth patterns, one decision</h2>
+          <p className="hp-subtitle hp-subtitle--wide">
             These patterns are not mutually exclusive — a production app
             typically uses all three simultaneously. Choose based on{" "}
             <em>who or what</em> is being authenticated.
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
-        <Grid container spacing={3}>
+        <div className="hp-grid hp-grid--three">
           {PATTERNS.map((p) => (
-            <Grid key={p.number} size={{ xs: 12, md: 4 }}>
-              <Card
-                component="a"
+            <a
+              key={p.number}
                 href={p.href}
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  textDecoration: "none",
-                  bgcolor: "background.paper",
-                  border: "1px solid",
-                  borderColor: "divider",
+                className="hp-card hp-card--link hp-auth-card"
+                style={{
                   borderTop: `3px solid ${p.color}`,
-                  borderRadius: "16px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.35)",
-                  transition:
-                    "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
-                  "&:hover": {
-                    transform: "translateY(-4px)",
-                    boxShadow: `0 20px 56px ${p.color}33`,
-                    borderColor: p.color,
-                    textDecoration: "none",
-                  },
+                  ["--hp-accent" as string]: p.color,
                 }}
-                elevation={0}
-              >
-                <CardContent
-                  sx={{
-                    p: 3.5,
-                    flex: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
+            >
+              <div className="hp-card-inner hp-auth-inner">
+                <div className="hp-auth-header">
+                  <span
+                    className="hp-icon-badge"
+                    style={{ backgroundColor: `${p.color}28`, color: p.color }}
+                  >
+                    <PatternIcon kind={p.icon} />
+                  </span>
+                  <span className="hp-auth-num" style={{ color: `${p.color}55` }}>
+                    {p.number}
+                  </span>
+                </div>
+
+                <span
+                  className="hp-chip"
+                  style={{ backgroundColor: `${p.color}28`, color: p.color }}
                 >
-                  {/* Header */}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      justifyContent: "space-between",
-                      mb: 2.5,
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "inline-flex",
-                        p: 1.5,
-                        borderRadius: "12px",
-                        bgcolor: `${p.color}28`,
-                        color: p.color,
-                      }}
-                    >
-                      {p.icon}
-                    </Box>
-                    <Typography
-                      sx={{
-                        fontSize: "2rem",
-                        fontWeight: 800,
-                        color: `${p.color}55`,
-                        lineHeight: 1,
-                        fontVariantNumeric: "tabular-nums",
-                      }}
-                    >
-                      {p.number}
-                    </Typography>
-                  </Box>
+                  {p.label}
+                </span>
 
-                  <Chip
-                    label={p.label}
-                    size="small"
-                    sx={{
-                      mb: 1.5,
-                      alignSelf: "flex-start",
-                      bgcolor: `${p.color}28`,
-                      color: p.color,
-                      fontWeight: 700,
-                      fontSize: "0.7rem",
-                      letterSpacing: "0.05em",
-                    }}
-                  />
+                <h3 className="hp-auth-title" style={{ color: p.color }}>
+                  {p.title}
+                </h3>
 
-                  <Typography
-                    variant="h5"
-                    sx={{ fontWeight: 800, mb: 1, color: p.color }}
-                  >
-                    {p.title}
-                  </Typography>
+                <p className="hp-auth-when">
+                  <strong>Use when:</strong> {p.when}
+                </p>
 
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      lineHeight: 1.65,
-                      mb: 3,
-                      color: "text.primary",
-                      opacity: 0.85,
-                    }}
-                  >
-                    <strong>Use when:</strong> {p.when}
-                  </Typography>
+                <hr className="hp-divider" />
 
-                  <Divider sx={{ mb: 2.5 }} />
+                <div className="hp-flow-list">
+                  {p.flow.map((step) => (
+                    <div key={step} className="hp-flow-item">
+                      <span className="hp-flow-arrow" style={{ color: p.color }}>
+                        →
+                      </span>
+                      <span className="hp-flow-text">{step}</span>
+                    </div>
+                  ))}
+                </div>
 
-                  {/* Flow */}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 1,
-                      flex: 1,
-                    }}
-                  >
-                    {p.flow.map((step, i) => (
-                      <Box
-                        key={i}
-                        sx={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          gap: 1,
-                        }}
-                      >
-                        <ArrowRightAltIcon
-                          sx={{
-                            fontSize: "1rem",
-                            color: p.color,
-                            mt: "2px",
-                            flexShrink: 0,
-                          }}
-                        />
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            lineHeight: 1.5,
-                            color: "text.primary",
-                            opacity: 0.8,
-                          }}
-                        >
-                          {step}
-                        </Typography>
-                      </Box>
-                    ))}
-                  </Box>
-
-                  {/* CTA */}
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      mt: 3,
-                      display: "block",
-                      color: p.color,
-                      fontWeight: 600,
-                      letterSpacing: "0.04em",
-                    }}
-                  >
-                    Read the guide →
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+                <span className="hp-cta" style={{ color: p.color }}>
+                  Read the guide →
+                </span>
+              </div>
+            </a>
           ))}
-        </Grid>
-      </Container>
-    </Box>
+        </div>
+      </div>
+    </section>
   );
 }
