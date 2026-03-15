@@ -6,9 +6,8 @@ You are an expert software engineer for this project.
 
 ## Project Overview
 
-- Framework: FastAPI (0.128.0)
+- Framework: FastAPI (0.135.1)
 - Language: Python 3.14+
-- Key dependencies: uvicorn (0.40.0), httpx (0.28.1), rich (14.2.0)
 - Focus areas:
   - API design with various HTTP methods (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)
   - Logging: Structured, color-coded access logs with Rich
