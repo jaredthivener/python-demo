@@ -107,11 +107,14 @@ export default function HostingSection(): React.ReactElement {
           {OPTIONS.map((opt) => (
             <a
               key={opt.name}
-                href={opt.href}
-                className="hp-card hp-card--link hp-hosting-card"
-                style={{ ["--hp-accent" as string]: opt.color }}
+              href={opt.href}
+              className="hp-card hp-card--link hp-hosting-card"
+              style={{ ["--hp-accent" as string]: opt.color }}
             >
-              <div className="hp-hosting-band" style={{ backgroundColor: opt.color }}>
+              <div
+                className="hp-hosting-band"
+                style={{ backgroundColor: opt.color }}
+              >
                 <div className="hp-hosting-top">
                   <div className="hp-hosting-brand">
                     <img
@@ -135,7 +138,10 @@ export default function HostingSection(): React.ReactElement {
                 <div className="hp-services">
                   {opt.services.map((svc) => (
                     <div key={svc.label} className="hp-service-item">
-                      <span className="hp-service-check" style={{ color: opt.color }}>
+                      <span
+                        className="hp-service-check"
+                        style={{ color: opt.color }}
+                      >
                         ✓
                       </span>
                       <div>

@@ -7,11 +7,7 @@ interface Feature {
   color: string;
 }
 
-function FeatureIcon({
-  kind,
-}: {
-  kind: Feature["icon"];
-}): React.ReactElement {
+function FeatureIcon({ kind }: { kind: Feature["icon"] }): React.ReactElement {
   switch (kind) {
     case "key":
       return (
@@ -138,8 +134,7 @@ export default function FeatureGrid(): React.ReactElement {
                 ["--hp-accent" as string]: feature.color,
               }}
             >
-              <div className="hp-card-inner"
-              >
+              <div className="hp-card-inner">
                 <span
                   className="hp-icon-badge"
                   style={{

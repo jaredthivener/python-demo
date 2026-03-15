@@ -73,9 +73,7 @@ export default function HomepageHero(): React.ReactElement {
                 🔒
               </span>
               FastAPI in the{" "}
-              <span className="hp-hero-gradient-text">
-                Cloud
-              </span>
+              <span className="hp-hero-gradient-text">Cloud</span>
             </h1>
 
             <p className="hp-hero-subtitle">
@@ -85,7 +83,10 @@ export default function HomepageHero(): React.ReactElement {
             </p>
 
             <div className="hp-hero-actions">
-              <a className="button button--primary button--lg hp-btn-primary" href="/python-demo/docs/intro">
+              <a
+                className="button button--primary button--lg hp-btn-primary"
+                href="/python-demo/docs/intro"
+              >
                 Get Started →
               </a>
               <a
@@ -139,12 +140,14 @@ export default function HomepageHero(): React.ReactElement {
               <div className="hp-terminal-bar">
                 <div className="hp-terminal-dots">
                   {["#FF5F57", "#FFBD2E", "#28CA41"].map((color) => (
-                    <span key={color} className="hp-terminal-dot" style={{ backgroundColor: color }} />
+                    <span
+                      key={color}
+                      className="hp-terminal-dot"
+                      style={{ backgroundColor: color }}
+                    />
                   ))}
                 </div>
-                <span className="hp-terminal-file">
-                  main.py
-                </span>
+                <span className="hp-terminal-file">main.py</span>
               </div>
 
               <pre className="hp-code-pre">

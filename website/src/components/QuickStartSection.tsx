@@ -74,9 +74,15 @@ export default function QuickStartSection(): React.ReactElement {
                     <br />
                     INFO: &nbsp;&nbsp; Waiting for application startup.
                     <br />
-                    INFO: &nbsp;&nbsp; <span className="hp-terminal-ok">Application startup complete.</span>
+                    INFO: &nbsp;&nbsp;{" "}
+                    <span className="hp-terminal-ok">
+                      Application startup complete.
+                    </span>
                     <br />
-                    INFO: &nbsp;&nbsp; Uvicorn running on <span className="hp-terminal-link">http://127.0.0.1:8000</span>
+                    INFO: &nbsp;&nbsp; Uvicorn running on{" "}
+                    <span className="hp-terminal-link">
+                      http://127.0.0.1:8000
+                    </span>
                   </p>
                 </div>
               </div>

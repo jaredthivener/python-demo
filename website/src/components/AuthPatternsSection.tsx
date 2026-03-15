@@ -11,11 +11,7 @@ interface Pattern {
   href: string;
 }
 
-function PatternIcon({
-  kind,
-}: {
-  kind: Pattern["icon"];
-}): React.ReactElement {
+function PatternIcon({ kind }: { kind: Pattern["icon"] }): React.ReactElement {
   switch (kind) {
     case "key":
       return (
@@ -113,12 +109,12 @@ export default function AuthPatternsSection(): React.ReactElement {
           {PATTERNS.map((p) => (
             <a
               key={p.number}
-                href={p.href}
-                className="hp-card hp-card--link hp-auth-card"
-                style={{
-                  borderTop: `3px solid ${p.color}`,
-                  ["--hp-accent" as string]: p.color,
-                }}
+              href={p.href}
+              className="hp-card hp-card--link hp-auth-card"
+              style={{
+                borderTop: `3px solid ${p.color}`,
+                ["--hp-accent" as string]: p.color,
+              }}
             >
               <div className="hp-card-inner hp-auth-inner">
                 <div className="hp-auth-header">
@@ -128,7 +124,10 @@ export default function AuthPatternsSection(): React.ReactElement {
                   >
                     <PatternIcon kind={p.icon} />
                   </span>
-                  <span className="hp-auth-num" style={{ color: `${p.color}55` }}>
+                  <span
+                    className="hp-auth-num"
+                    style={{ color: `${p.color}55` }}
+                  >
                     {p.number}
                   </span>
                 </div>
@@ -153,7 +152,10 @@ export default function AuthPatternsSection(): React.ReactElement {
                 <div className="hp-flow-list">
                   {p.flow.map((step) => (
                     <div key={step} className="hp-flow-item">
-                      <span className="hp-flow-arrow" style={{ color: p.color }}>
+                      <span
+                        className="hp-flow-arrow"
+                        style={{ color: p.color }}
+                      >
                         →
                       </span>
                       <span className="hp-flow-text">{step}</span>
