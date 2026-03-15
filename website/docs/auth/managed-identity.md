@@ -29,6 +29,7 @@ The token is issued based on the identity assigned to your compute resource. **N
 **ECS Fargate:** Set `taskRoleArn` in your task definition.
 
 **EKS (IRSA):** Annotate a Kubernetes service account:
+
 ```bash
 eksctl create iamserviceaccount \
   --name fastapi-sa \
@@ -57,12 +58,12 @@ def get_secret(secret_name: str) -> dict:
 
 ### Credential chain (`boto3`)
 
-| Order | Source | When active |
-|---|---|---|
-| 1 | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` env vars | CI/CD |
-| 2 | `~/.aws/credentials` | Local development |
-| 3 | AWS CLI profile | Local development |
-| 4 | ECS task role / Lambda execution role / IRSA token | **Production** |
+| Order | Source                                                 | When active       |
+| ----- | ------------------------------------------------------ | ----------------- |
+| 1     | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` env vars | CI/CD             |
+| 2     | `~/.aws/credentials`                                   | Local development |
+| 3     | AWS CLI profile                                        | Local development |
+| 4     | ECS task role / Lambda execution role / IRSA token     | **Production**    |
 
 ---
 
@@ -71,6 +72,7 @@ def get_secret(secret_name: str) -> dict:
 ### Enable the identity
 
 **Cloud Run:** Pass `--service-account` when deploying:
+
 ```bash
 gcloud run deploy fastapi-books \
   --service-account fastapi-sa@my-project.iam.gserviceaccount.com \
@@ -78,6 +80,7 @@ gcloud run deploy fastapi-books \
 ```
 
 **GKE Workload Identity:** Annotate the Kubernetes service account and bind it to a Google Cloud service account:
+
 ```bash
 gcloud iam service-accounts add-iam-policy-binding fastapi-gke-sa@my-project.iam.gserviceaccount.com \
   --role roles/iam.workloadIdentityUser \
@@ -103,11 +106,11 @@ def get_secret(secret_id: str) -> str:
 
 ### ADC credential chain
 
-| Order | Source | When active |
-|---|---|---|
-| 1 | `GOOGLE_APPLICATION_CREDENTIALS` env var | CI/CD / service account key |
-| 2 | `gcloud auth application-default login` | Local development |
-| 3 | Cloud Run / GKE Workload Identity / App Engine metadata | **Production** |
+| Order | Source                                                  | When active                 |
+| ----- | ------------------------------------------------------- | --------------------------- |
+| 1     | `GOOGLE_APPLICATION_CREDENTIALS` env var                | CI/CD / service account key |
+| 2     | `gcloud auth application-default login`                 | Local development           |
+| 3     | Cloud Run / GKE Workload Identity / App Engine metadata | **Production**              |
 
 ---
 
@@ -118,6 +121,7 @@ def get_secret(secret_id: str) -> str:
 **Portal:** Resource → Identity → System assigned → **On** → Save
 
 **Azure CLI:**
+
 ```bash
 # App Service or Function App
 az webapp identity assign --name my-app --resource-group my-rg
@@ -148,6 +152,7 @@ def get_sql_connection() -> pyodbc.Connection:
 ```
 
 **Azure side:** grant the Managed Identity the `db_datareader` / `db_datawriter` SQL role:
+
 ```sql
 CREATE USER [my-app] FROM EXTERNAL PROVIDER;
 ALTER ROLE db_datareader ADD MEMBER [my-app];
@@ -179,6 +184,7 @@ app = FastAPI(lifespan=lifespan)
 ```
 
 Grant the Managed Identity the `Key Vault Secrets User` RBAC role:
+
 ```bash
 az role assignment create \
   --assignee <principal-id-of-your-mi> \
@@ -194,22 +200,22 @@ uv add azure-identity azure-keyvault-secrets
 
 ### `DefaultAzureCredential` chain
 
-| Order | Source | When active |
-|---|---|---|
-| 1 | `AZURE_CLIENT_ID` + `AZURE_CLIENT_SECRET` env vars | CI/CD service principals |
-| 2 | Azure CLI (`az login`) | Local development |
-| 3 | VS Code credential | Local development |
-| 4 | Managed Identity (IMDS) | **Production — Azure compute** |
+| Order | Source                                             | When active                    |
+| ----- | -------------------------------------------------- | ------------------------------ |
+| 1     | `AZURE_CLIENT_ID` + `AZURE_CLIENT_SECRET` env vars | CI/CD service principals       |
+| 2     | Azure CLI (`az login`)                             | Local development              |
+| 3     | VS Code credential                                 | Local development              |
+| 4     | Managed Identity (IMDS)                            | **Production — Azure compute** |
 
 ---
 
 ## Local development, across all clouds
 
-| Cloud | Local credential command | SDK |
-|---|---|---|
-| AWS | `aws configure` or AWS SSO login | `boto3` |
-| GCP | `gcloud auth application-default login` | `google-auth` |
-| Azure | `az login` | `azure-identity` |
+| Cloud | Local credential command                | SDK              |
+| ----- | --------------------------------------- | ---------------- |
+| AWS   | `aws configure` or AWS SSO login        | `boto3`          |
+| GCP   | `gcloud auth application-default login` | `google-auth`    |
+| Azure | `az login`                              | `azure-identity` |
 
 You write the same production code — the credential source resolves automatically based on environment.
 
@@ -222,7 +228,8 @@ You write the same production code — the credential source resolves automatica
 - [Azure Functions](../deployment/azure-functions.md) — Azure serverless
 
 ALTER ROLE db_datawriter ADD MEMBER [my-app];
-```
+
+````
 
 ## Pattern 2b — Key Vault for secrets
 
@@ -250,9 +257,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Cleanup if needed
 
 app = FastAPI(lifespan=lifespan)
-```
+````
 
 **Azure side:** grant your Managed Identity the `Key Vault Secrets User` RBAC role:
+
 ```bash
 az role assignment create \
   --assignee <principal-id-of-your-mi> \
@@ -270,18 +278,19 @@ uv add azure-identity azure-keyvault-secrets
 
 `DefaultAzureCredential` tries credential sources in order, making local development seamless:
 
-| Order | Source | When active |
-|---|---|---|
-| 1 | `AZURE_CLIENT_ID` + `AZURE_CLIENT_SECRET` env vars | CI/CD service principals |
-| 2 | Azure CLI (`az login`) | Local development |
-| 3 | VS Code credential | Local development |
-| 4 | Managed Identity (IMDS) | **Production — Azure compute** |
+| Order | Source                                             | When active                    |
+| ----- | -------------------------------------------------- | ------------------------------ |
+| 1     | `AZURE_CLIENT_ID` + `AZURE_CLIENT_SECRET` env vars | CI/CD service principals       |
+| 2     | Azure CLI (`az login`)                             | Local development              |
+| 3     | VS Code credential                                 | Local development              |
+| 4     | Managed Identity (IMDS)                            | **Production — Azure compute** |
 
 You write the same code in dev and prod — the credential source changes automatically.
 
 ## Local development
 
 For local dev, run `az login` and set `AZURE_KEYVAULT_URL`:
+
 ```bash
 az login
 export AZURE_KEYVAULT_URL=https://myvault.vault.azure.net/

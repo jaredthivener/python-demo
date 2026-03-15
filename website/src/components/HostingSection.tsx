@@ -29,11 +29,21 @@ const OPTIONS: HostingOption[] = [
     badge: "Most Adopted",
     badgeColor: "#E53935",
     services: [
-      { label: "Lambda", description: "Serverless, pay-per-invocation with IRSA for secrets" },
-      { label: "ECS Fargate", description: "Managed containers, no nodes to patch" },
-      { label: "Elastic Beanstalk", description: "PaaS with one-command deploys" },
+      {
+        label: "Lambda",
+        description: "Serverless, pay-per-invocation with IRSA for secrets",
+      },
+      {
+        label: "ECS Fargate",
+        description: "Managed containers, no nodes to patch",
+      },
+      {
+        label: "Elastic Beanstalk",
+        description: "PaaS with one-command deploys",
+      },
     ],
-    bestFor: "Teams already on AWS — native IAM, ECR, RDS, and Secrets Manager integration",
+    bestFor:
+      "Teams already on AWS — native IAM, ECR, RDS, and Secrets Manager integration",
     href: "/python-demo/docs/deployment/aws",
   },
   {
@@ -44,11 +54,21 @@ const OPTIONS: HostingOption[] = [
     badge: "Best Serverless Containers",
     badgeColor: "#00ACC1",
     services: [
-      { label: "Cloud Run", description: "Container-native serverless, scales to zero" },
-      { label: "GKE", description: "Autopilot or standard Kubernetes with Workload Identity" },
-      { label: "App Engine", description: "Managed PaaS with automatic scaling" },
+      {
+        label: "Cloud Run",
+        description: "Container-native serverless, scales to zero",
+      },
+      {
+        label: "GKE",
+        description: "Autopilot or standard Kubernetes with Workload Identity",
+      },
+      {
+        label: "App Engine",
+        description: "Managed PaaS with automatic scaling",
+      },
     ],
-    bestFor: "Container-first teams — Cloud Run is the simplest serverless container on any cloud",
+    bestFor:
+      "Container-first teams — Cloud Run is the simplest serverless container on any cloud",
     href: "/python-demo/docs/deployment/gcp",
   },
   {
@@ -59,11 +79,21 @@ const OPTIONS: HostingOption[] = [
     badge: "Deep Microsoft Integration",
     badgeColor: "#8B5CF6",
     services: [
-      { label: "Azure Functions", description: "Serverless with Managed Identity built-in" },
-      { label: "AKS", description: "Kubernetes with Workload Identity Federation" },
-      { label: "App Service", description: "PaaS with deployment slots and Key Vault refs" },
+      {
+        label: "Azure Functions",
+        description: "Serverless with Managed Identity built-in",
+      },
+      {
+        label: "AKS",
+        description: "Kubernetes with Workload Identity Federation",
+      },
+      {
+        label: "App Service",
+        description: "PaaS with deployment slots and Key Vault refs",
+      },
     ],
-    bestFor: "Teams using Microsoft 365, Entra ID, or Azure DevOps — native identity federation",
+    bestFor:
+      "Teams using Microsoft 365, Entra ID, or Azure DevOps — native identity federation",
     href: "/python-demo/docs/deployment/azure-functions",
   },
 ];
@@ -153,17 +183,36 @@ export default function HostingSection(): React.ReactElement {
                   }}
                 >
                   {/* Top row: logo + name on left, badge pinned to right */}
-                  <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 1 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      justifyContent: "space-between",
+                      gap: 1,
+                    }}
+                  >
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
+                    >
                       <Box
                         component="img"
                         src={opt.logo}
                         alt={`${opt.name} logo`}
-                        sx={{ width: 36, height: 36, objectFit: "contain", flexShrink: 0 }}
+                        sx={{
+                          width: 36,
+                          height: 36,
+                          objectFit: "contain",
+                          flexShrink: 0,
+                        }}
                       />
                       <Typography
                         variant="h5"
-                        sx={{ fontWeight: 800, color: "white", lineHeight: 1.1, fontSize: "1.25rem" }}
+                        sx={{
+                          fontWeight: 800,
+                          color: "white",
+                          lineHeight: 1.1,
+                          fontSize: "1.25rem",
+                        }}
                       >
                         {opt.name}
                       </Typography>
@@ -187,22 +236,61 @@ export default function HostingSection(): React.ReactElement {
                   {/* Tagline row */}
                   <Typography
                     variant="caption"
-                    sx={{ color: "rgba(255,255,255,0.85)", fontSize: "0.75rem", lineHeight: 1.4 }}
+                    sx={{
+                      color: "rgba(255,255,255,0.85)",
+                      fontSize: "0.75rem",
+                      lineHeight: 1.4,
+                    }}
                   >
                     {opt.tagline}
                   </Typography>
                 </Box>
 
-                <CardContent sx={{ p: 3.5, flex: 1, display: "flex", flexDirection: "column" }}>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, flex: 1 }}>
+                <CardContent
+                  sx={{
+                    p: 3.5,
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1.5,
+                      flex: 1,
+                    }}
+                  >
                     {opt.services.map((svc) => (
-                      <Box key={svc.label} sx={{ display: "flex", alignItems: "flex-start", gap: 1.25 }}>
-                        <CheckIcon sx={{ fontSize: "1rem", color: opt.color, mt: "3px", flexShrink: 0 }} />
+                      <Box
+                        key={svc.label}
+                        sx={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: 1.25,
+                        }}
+                      >
+                        <CheckIcon
+                          sx={{
+                            fontSize: "1rem",
+                            color: opt.color,
+                            mt: "3px",
+                            flexShrink: 0,
+                          }}
+                        />
                         <Box>
-                          <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.3 }}>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontWeight: 600, lineHeight: 1.3 }}
+                          >
                             {svc.label}
                           </Typography>
-                          <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.55, fontSize: "0.8rem" }}>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ lineHeight: 1.55, fontSize: "0.8rem" }}
+                          >
                             {svc.description}
                           </Typography>
                         </Box>
@@ -220,16 +308,30 @@ export default function HostingSection(): React.ReactElement {
                   >
                     <Typography
                       variant="caption"
-                      sx={{ fontWeight: 600, color: "text.secondary", display: "block", mb: 0.5 }}
+                      sx={{
+                        fontWeight: 600,
+                        color: "text.secondary",
+                        display: "block",
+                        mb: 0.5,
+                      }}
                     >
                       BEST FOR
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.55 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ lineHeight: 1.55 }}
+                    >
                       {opt.bestFor}
                     </Typography>
                     <Typography
                       variant="caption"
-                      sx={{ mt: 2, display: "block", color: opt.color, fontWeight: 600 }}
+                      sx={{
+                        mt: 2,
+                        display: "block",
+                        color: opt.color,
+                        fontWeight: 600,
+                      }}
                     >
                       Deployment guide →
                     </Typography>

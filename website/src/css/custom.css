@@ -15,10 +15,10 @@
   --ifm-color-primary-lighter: #1b7ae2;
   --ifm-color-primary-lightest: #2589f0;
 
-  --ifm-font-family-base: "Inter", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, sans-serif;
-  --ifm-font-family-monospace: "JetBrains Mono", "Fira Code", "Cascadia Code",
-    monospace;
+  --ifm-font-family-base:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --ifm-font-family-monospace:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
   --ifm-font-size-base: 16px;
   --ifm-line-height-base: 1.7;
 

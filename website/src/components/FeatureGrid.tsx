@@ -84,7 +84,7 @@ export default function FeatureGrid(): React.ReactElement {
               fontSize: "0.75rem",
             }}
           >
-            What's Inside
+            What The Docs Cover
           </Typography>
           <Typography
             variant="h2"
@@ -95,7 +95,7 @@ export default function FeatureGrid(): React.ReactElement {
               fontSize: { xs: "2rem", md: "2.75rem" },
             }}
           >
-            Everything you need for production
+            Concepts first, implementation second
           </Typography>
           <Typography
             variant="body1"
@@ -107,8 +107,8 @@ export default function FeatureGrid(): React.ReactElement {
               lineHeight: 1.7,
             }}
           >
-            Six pillars of a secure, maintainable FastAPI service — each
-            demonstrated with working, copy-paste-ready code.
+            Six core topics covered by the documentation. The live demo app
+            implements the API-focused pieces and stays intentionally small.
           </Typography>
         </Box>
 
@@ -121,7 +121,8 @@ export default function FeatureGrid(): React.ReactElement {
                   border: "1px solid",
                   borderColor: "divider",
                   borderRadius: "16px",
-                  transition: "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
+                  transition:
+                    "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
                   "&:hover": {
                     transform: "translateY(-4px)",
                     boxShadow: `0 12px 40px rgba(0,0,0,0.1)`,

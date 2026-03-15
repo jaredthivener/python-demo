@@ -8,14 +8,14 @@ Deploy FastAPI to Google Cloud with zero long-lived credentials using Workload I
 
 ## Choose your target
 
-| | Cloud Run | GKE + Workload Identity | App Engine |
-|---|---|---|---|
-| **Cost at idle** | $0 (scale to zero) | ~$100+/month (node pool) | ~$0 (F1 free tier) |
-| **Cold start?** | Yes (mitigable with min-instances) | No | Yes |
-| **IAM auth** | Service account binding | Workload Identity | Service account |
-| **Container support** | Native | Native | Custom runtime |
-| **Custom networking** | VPC connector | Full VPC | Limited |
-| **Best for** | Serverless containers | Microservices / complex routing | Simple web apps |
+|                       | Cloud Run                          | GKE + Workload Identity         | App Engine         |
+| --------------------- | ---------------------------------- | ------------------------------- | ------------------ |
+| **Cost at idle**      | $0 (scale to zero)                 | ~$100+/month (node pool)        | ~$0 (F1 free tier) |
+| **Cold start?**       | Yes (mitigable with min-instances) | No                              | Yes                |
+| **IAM auth**          | Service account binding            | Workload Identity               | Service account    |
+| **Container support** | Native                             | Native                          | Custom runtime     |
+| **Custom networking** | VPC connector                      | Full VPC                        | Limited            |
+| **Best for**          | Serverless containers              | Microservices / complex routing | Simple web apps    |
 
 ---
 
@@ -150,7 +150,7 @@ metadata:
 spec:
   template:
     spec:
-      serviceAccountName: fastapi-sa   # <-- Workload Identity annotation lives here
+      serviceAccountName: fastapi-sa # <-- Workload Identity annotation lives here
       containers:
         - name: fastapi
           image: us-central1-docker.pkg.dev/my-project/fastapi-repo/fastapi-books:latest

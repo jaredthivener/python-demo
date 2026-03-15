@@ -3,9 +3,9 @@ import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
-  title: "FastAPI Docs",
+  title: "Python Demo API",
   tagline:
-    "Production-ready authentication, authorization, and deployment patterns for AWS, GCP, and Azure",
+    "A compact FastAPI reference app with auth and deployment patterns for AWS, GCP, and Azure",
   favicon: "img/favicon.svg",
 
   // GitHub Pages
@@ -40,12 +40,12 @@ const config: Config = {
     image: "img/social-card.png",
     colorMode: {
       defaultMode: "dark",
-      disableSwitch: true,
-      respectPrefersColorScheme: false,
+      disableSwitch: false,
+      respectPrefersColorScheme: true,
     },
     navbar: {
       title: "",
-      logo: { alt: "FastAPI in the Cloud Logo", src: "img/logo.svg" },
+      logo: { alt: "Python Demo API Logo", src: "img/logo.svg" },
       items: [
         {
           type: "docSidebar",
@@ -103,8 +103,14 @@ const config: Config = {
           items: [
             { label: "Overview", to: "/docs/deployment" },
             { label: "AWS (Lambda / ECS)", to: "/docs/deployment/aws-lambda" },
-            { label: "GCP (Cloud Run / GKE)", to: "/docs/deployment/gcp-cloud-run" },
-            { label: "Azure (Functions / AKS)", to: "/docs/deployment/azure-functions" },
+            {
+              label: "GCP (Cloud Run / GKE)",
+              to: "/docs/deployment/gcp-cloud-run",
+            },
+            {
+              label: "Azure (Functions / AKS)",
+              to: "/docs/deployment/azure-functions",
+            },
           ],
         },
         {
@@ -129,7 +135,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} FastAPI in the Cloud. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Python Demo API. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

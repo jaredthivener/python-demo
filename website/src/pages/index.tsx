@@ -7,14 +7,11 @@ import HostingSection from "../components/HostingSection";
 import QuickStartSection from "../components/QuickStartSection";
 
 const DESCRIPTION =
-  "Production-ready FastAPI patterns for JWT authentication, Azure Managed Identity, and Microsoft Entra ID — with a fully working Books API demo.";
+  "A compact FastAPI reference app with a working Books API, rich logging, and balanced AWS, GCP, and Azure guidance.";
 
 export default function Home(): React.ReactElement {
   return (
-    <Layout
-      title="FastAPI on Azure — Auth & Deployment Patterns"
-      description={DESCRIPTION}
-    >
+    <Layout title="Python Demo API" description={DESCRIPTION}>
       <HomepageHero />
       <FeatureGrid />
       <AuthPatternsSection />

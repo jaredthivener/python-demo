@@ -7,10 +7,16 @@ import Typography from "@mui/material/Typography";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const STEPS = [
-  { cmd: "git clone https://github.com/jaredthivener/python-demo", comment: "# clone the repo" },
+  {
+    cmd: "git clone https://github.com/jaredthivener/python-demo",
+    comment: "# clone the repo",
+  },
   { cmd: "cd python-demo", comment: "" },
-  { cmd: "uv sync", comment: "# install dependencies" },
-  { cmd: "uvicorn main:app --reload --no-access-log", comment: "# start the server" },
+  { cmd: "uv sync --group dev", comment: "# install dependencies" },
+  {
+    cmd: "uvicorn main:app --reload --no-access-log",
+    comment: "# start the server",
+  },
 ];
 
 export default function QuickStartSection(): React.ReactElement {
@@ -54,7 +60,8 @@ export default function QuickStartSection(): React.ReactElement {
               variant="body1"
               sx={{ color: "rgba(255,255,255,0.7)", lineHeight: 1.7, mb: 4 }}
             >
-              The demo API includes 3 books pre-seeded at startup. Hit{" "}
+              The live demo focuses on the Books API and observability basics.
+              Hit{" "}
               <Box
                 component="code"
                 sx={{
@@ -69,7 +76,8 @@ export default function QuickStartSection(): React.ReactElement {
               >
                 /docs
               </Box>{" "}
-              for the interactive Swagger UI — no extra setup required.
+              for the interactive Swagger UI. Auth and deployment patterns are
+              explained in the docs alongside the running demo.
             </Typography>
             <Button
               variant="contained"
@@ -114,7 +122,15 @@ export default function QuickStartSection(): React.ReactElement {
               >
                 <Box sx={{ display: "flex", gap: 0.75 }}>
                   {["#FF5F57", "#FFBD2E", "#28CA41"].map((c) => (
-                    <Box key={c} sx={{ width: 12, height: 12, borderRadius: "50%", bgcolor: c }} />
+                    <Box
+                      key={c}
+                      sx={{
+                        width: 12,
+                        height: 12,
+                        borderRadius: "50%",
+                        bgcolor: c,
+                      }}
+                    />
                   ))}
                 </Box>
                 <Typography
@@ -133,7 +149,9 @@ export default function QuickStartSection(): React.ReactElement {
               <Box sx={{ p: 3 }}>
                 {STEPS.map(({ cmd, comment }, i) => (
                   <Box key={i} sx={{ mb: i < STEPS.length - 1 ? 1.5 : 0 }}>
-                    <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}
+                    >
                       <Typography
                         sx={{
                           color: "#28CA41",
@@ -149,7 +167,8 @@ export default function QuickStartSection(): React.ReactElement {
                         <Typography
                           component="span"
                           sx={{
-                            fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+                            fontFamily:
+                              '"JetBrains Mono", "Fira Code", monospace',
                             fontSize: "0.875rem",
                             color: "#C9D1D9",
                             lineHeight: 1.65,

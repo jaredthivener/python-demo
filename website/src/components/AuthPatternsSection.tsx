@@ -31,7 +31,12 @@ const PATTERNS: Pattern[] = [
     title: "JWT Bearer",
     color: "#1565C0",
     when: "Generic internet users — mobile apps, SPAs, public APIs.",
-    flow: ["User sends credentials", "Server issues signed JWT", "Client attaches Bearer token", "Server verifies cryptographically — no DB hit"],
+    flow: [
+      "User sends credentials",
+      "Server issues signed JWT",
+      "Client attaches Bearer token",
+      "Server verifies cryptographically — no DB hit",
+    ],
     href: "/python-demo/docs/auth/jwt-bearer",
   },
   {
@@ -41,7 +46,12 @@ const PATTERNS: Pattern[] = [
     title: "Cloud IAM / Workload Identity",
     color: "#0097A7",
     when: "Your app talking to managed cloud services (databases, queues, secrets) — zero secrets in code on any cloud.",
-    flow: ["App requests token from platform metadata service", "Cloud IAM issues short-lived credential", "App presents token to cloud service", "Service validates — no password ever stored"],
+    flow: [
+      "App requests token from platform metadata service",
+      "Cloud IAM issues short-lived credential",
+      "App presents token to cloud service",
+      "Service validates — no password ever stored",
+    ],
     href: "/python-demo/docs/auth/managed-identity",
   },
   {
@@ -51,7 +61,12 @@ const PATTERNS: Pattern[] = [
     title: "Enterprise IdP",
     color: "#68217A",
     when: "Corporate users who authenticate via Cognito (AWS), Google Identity (GCP), or Entra ID (Azure) — with MFA and role-based access.",
-    flow: ["User logs in via enterprise IdP (MFA, conditional access)", "IdP issues RS256 JWT with app roles / groups", "FastAPI fetches JWKS, validates token", "Roles claim drives authorization"],
+    flow: [
+      "User logs in via enterprise IdP (MFA, conditional access)",
+      "IdP issues RS256 JWT with app roles / groups",
+      "FastAPI fetches JWKS, validates token",
+      "Roles claim drives authorization",
+    ],
     href: "/python-demo/docs/auth/entra-id",
   },
 ];
@@ -102,9 +117,9 @@ export default function AuthPatternsSection(): React.ReactElement {
               lineHeight: 1.7,
             }}
           >
-            These patterns are not mutually exclusive — a production app typically
-            uses all three simultaneously. Choose based on <em>who or what</em> is
-            being authenticated.
+            These patterns are not mutually exclusive — a production app
+            typically uses all three simultaneously. Choose based on{" "}
+            <em>who or what</em> is being authenticated.
           </Typography>
         </Box>
 
@@ -125,7 +140,8 @@ export default function AuthPatternsSection(): React.ReactElement {
                   borderTop: `3px solid ${p.color}`,
                   borderRadius: "16px",
                   boxShadow: "0 2px 8px rgba(0,0,0,0.35)",
-                  transition: "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
+                  transition:
+                    "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
                   "&:hover": {
                     transform: "translateY(-4px)",
                     boxShadow: `0 20px 56px ${p.color}33`,
@@ -135,9 +151,23 @@ export default function AuthPatternsSection(): React.ReactElement {
                 }}
                 elevation={0}
               >
-                <CardContent sx={{ p: 3.5, flex: 1, display: "flex", flexDirection: "column" }}>
+                <CardContent
+                  sx={{
+                    p: 3.5,
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
                   {/* Header */}
-                  <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", mb: 2.5 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      justifyContent: "space-between",
+                      mb: 2.5,
+                    }}
+                  >
                     <Box
                       sx={{
                         display: "inline-flex",
@@ -176,22 +206,61 @@ export default function AuthPatternsSection(): React.ReactElement {
                     }}
                   />
 
-                  <Typography variant="h5" sx={{ fontWeight: 800, mb: 1, color: p.color }}>
+                  <Typography
+                    variant="h5"
+                    sx={{ fontWeight: 800, mb: 1, color: p.color }}
+                  >
                     {p.title}
                   </Typography>
 
-                  <Typography variant="body2" sx={{ lineHeight: 1.65, mb: 3, color: "text.primary", opacity: 0.85 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      lineHeight: 1.65,
+                      mb: 3,
+                      color: "text.primary",
+                      opacity: 0.85,
+                    }}
+                  >
                     <strong>Use when:</strong> {p.when}
                   </Typography>
 
                   <Divider sx={{ mb: 2.5 }} />
 
                   {/* Flow */}
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 1, flex: 1 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1,
+                      flex: 1,
+                    }}
+                  >
                     {p.flow.map((step, i) => (
-                      <Box key={i} sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
-                        <ArrowRightAltIcon sx={{ fontSize: "1rem", color: p.color, mt: "2px", flexShrink: 0 }} />
-                        <Typography variant="caption" sx={{ lineHeight: 1.5, color: "text.primary", opacity: 0.8 }}>
+                      <Box
+                        key={i}
+                        sx={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: 1,
+                        }}
+                      >
+                        <ArrowRightAltIcon
+                          sx={{
+                            fontSize: "1rem",
+                            color: p.color,
+                            mt: "2px",
+                            flexShrink: 0,
+                          }}
+                        />
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            lineHeight: 1.5,
+                            color: "text.primary",
+                            opacity: 0.8,
+                          }}
+                        >
                           {step}
                         </Typography>
                       </Box>

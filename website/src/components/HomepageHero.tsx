@@ -9,20 +9,18 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LockIcon from "@mui/icons-material/Lock";
 
-const CODE_SNIPPET = `from fastapi import FastAPI, Depends
-from fastapi.security import OAuth2PasswordBearer
+const CODE_SNIPPET = `from fastapi import FastAPI, Query
+from pydantic import BaseModel
 
-app = FastAPI(title="Books API", version="1.0.0")
-oauth2 = OAuth2PasswordBearer(tokenUrl="token")
+class BookListResponse(BaseModel):
+  items: list[BookResponse]
+  total: int
+  skip: int
+  limit: int
 
-@app.get("/api/v1/books", response_model=PaginatedBooks)
-async def list_books(
-    pagination: Pagination = Depends(PaginationParams),
-    token: str = Depends(oauth2),
-) -> PaginatedBooks:
-    # Zero-trust: always validate the bearer token
-    claims = verify_token(token)
-    return paginate(db.values(), pagination)`;
+@app.get("/api/v1/books", response_model=BookListResponse)
+async def list_books(skip: int = Query(0, ge=0), limit: int = Query(20, ge=1, le=100)):
+  return paginate_books(list(store.values()), skip=skip, limit=limit)`;
 
 /**
  * Tokenize a Python snippet into React nodes without regex chaining issues.
@@ -31,13 +29,14 @@ async def list_books(
 function highlightPython(code: string): React.ReactNode[] {
   const TOKEN_RE = new RegExp(
     [
-      /(#[^\n]*)/.source,                                                   // comment
-      /(@\w+)/.source,                                                       // decorator
-      /"[^"]*"/.source,                                                      // string
-      /\b(from|import|async|def|return|await|str)\b/.source,                // keyword
-      /\b(FastAPI|Depends|OAuth2PasswordBearer|PaginationParams|verify_token|paginate)\b/.source, // function
+      /(#[^\n]*)/.source, // comment
+      /(@\w+)/.source, // decorator
+      /"[^"]*"/.source, // string
+      /\b(from|import|async|def|return|class|int|list)\b/.source, // keyword
+      /\b(BaseModel|BookListResponse|BookResponse|Query|paginate_books|list_books)\b/
+        .source, // function
     ].join("|"),
-    "g"
+    "g",
   );
 
   const nodes: React.ReactNode[] = [];
@@ -53,9 +52,14 @@ function highlightPython(code: string): React.ReactNode[] {
     if (text.startsWith("#")) cls = "cm";
     else if (text.startsWith("@")) cls = "dec";
     else if (text.startsWith('"')) cls = "str";
-    else if (/^(from|import|async|def|return|await|str)$/.test(text)) cls = "kw";
+    else if (/^(from|import|async|def|return|class|int|list)$/.test(text))
+      cls = "kw";
     else cls = "fn";
-    nodes.push(<span key={match.index} className={cls}>{text}</span>);
+    nodes.push(
+      <span key={match.index} className={cls}>
+        {text}
+      </span>,
+    );
     lastIndex = TOKEN_RE.lastIndex;
   }
 
@@ -70,7 +74,8 @@ export default function HomepageHero(): React.ReactElement {
     <Box
       component="section"
       sx={{
-        background: "linear-gradient(135deg, #0A0E1A 0%, #0D2B5E 60%, #0D47A1 100%)",
+        background:
+          "linear-gradient(135deg, #0A0E1A 0%, #0D2B5E 60%, #0D47A1 100%)",
         color: "white",
         pt: { xs: 10, md: 14 },
         pb: { xs: 10, md: 14 },
@@ -102,8 +107,6 @@ export default function HomepageHero(): React.ReactElement {
         <Grid container spacing={6} alignItems="center">
           {/* ── Left column ── */}
           <Grid size={{ xs: 12, md: 6 }}>
-
-
             <Typography
               variant="h1"
               sx={{
@@ -156,10 +159,9 @@ export default function HomepageHero(): React.ReactElement {
                 maxWidth: 480,
               }}
             >
-              Production patterns for JWT authentication, Cloud IAM /
-              Workload Identity, and Enterprise SSO — deployable to AWS,
-              GCP, or Azure. Includes a working Books API demo you can run
-              in minutes.
+              A compact FastAPI reference app with a working Books API, rich
+              request logging, and balanced guidance for authentication and
+              deployment on AWS, GCP, and Azure.
             </Typography>
 
             <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
@@ -207,7 +209,7 @@ export default function HomepageHero(): React.ReactElement {
             {/* Stats row */}
             <Box sx={{ display: "flex", gap: 4, mt: 5 }}>
               {[
-                { value: "3", label: "Auth Patterns" },
+                { value: "6", label: "Books Endpoints" },
                 { value: "3", label: "Cloud Providers" },
                 { value: "0", label: "Secrets in Code" },
               ].map(({ value, label }) => (
@@ -240,9 +242,9 @@ export default function HomepageHero(): React.ReactElement {
             <Box sx={{ display: "flex", gap: 1.25, flexWrap: "wrap", mt: 3.5 }}>
               {[
                 { label: "FastAPI", color: "#009688" },
-                { label: "AWS",     color: "#FF9900" },
-                { label: "GCP",     color: "#34A853" },
-                { label: "Azure",   color: "#0078D4" },
+                { label: "AWS", color: "#FF9900" },
+                { label: "GCP", color: "#34A853" },
+                { label: "Azure", color: "#0078D4" },
               ].map(({ label, color }) => (
                 <Box
                   key={label}
@@ -314,7 +316,7 @@ export default function HomepageHero(): React.ReactElement {
                     fontFamily: "monospace",
                   }}
                 >
-                  routers/books.py
+                  main.py
                 </Typography>
               </Box>
 

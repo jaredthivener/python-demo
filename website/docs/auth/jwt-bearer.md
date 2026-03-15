@@ -96,13 +96,13 @@ async def list_books(claims: Annotated[TokenClaims, Depends(verify_token)]) -> d
 
 ## Security checklist
 
-| Item | Why |
-|---|---|
-| `argon2id` via `pwdlib` | Memory-hard, GPU-resistant password hashing |
-| Dummy hash on unknown user | Prevents user enumeration via timing |
-| `SECRET_KEY` from environment | Never commit secrets to source control |
-| 15-minute expiry | Limits blast radius of stolen tokens |
-| `401` for bad token, `403` for bad scope | Correct RFC 6750 semantics |
+| Item                                     | Why                                                  |
+| ---------------------------------------- | ---------------------------------------------------- |
+| `argon2id` via `pwdlib`                  | Memory-hard, GPU-resistant password hashing          |
+| Dummy hash on unknown user               | Prevents user enumeration via timing                 |
+| `SECRET_KEY` from environment            | Never commit secrets to source control               |
+| 15-minute expiry                         | Limits blast radius of stolen tokens                 |
+| `401` for bad token, `403` for bad scope | Correct RFC 6750 semantics                           |
 | RS256 instead of HS256 for multi-service | Asymmetric — services verify without the signing key |
 
 ## Key Vault integration

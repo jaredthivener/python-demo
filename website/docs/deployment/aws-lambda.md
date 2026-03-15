@@ -57,11 +57,11 @@ def handler(event: dict, context: object) -> dict:
 
 The three decorators give you out-of-the-box:
 
-| Decorator | What it adds |
-|---|---|
-| `@logger.inject_lambda_context` | Request ID, function name, cold start flag on every log line |
-| `@tracer.capture_lambda_handler` | AWS X-Ray subsegment for the full invocation |
-| `@metrics.log_metrics` | Flushes CloudWatch EMF metrics; records `ColdStart` count automatically |
+| Decorator                        | What it adds                                                            |
+| -------------------------------- | ----------------------------------------------------------------------- |
+| `@logger.inject_lambda_context`  | Request ID, function name, cold start flag on every log line            |
+| `@tracer.capture_lambda_handler` | AWS X-Ray subsegment for the full invocation                            |
+| `@metrics.log_metrics`           | Flushes CloudWatch EMF metrics; records `ColdStart` count automatically |
 
 ## Required environment variables
 
@@ -200,12 +200,14 @@ aws lambda create-function \
 
 :::tip Provisioned Concurrency
 For latency-sensitive APIs, enable provisioned concurrency to eliminate cold starts entirely:
+
 ```bash
 aws lambda put-provisioned-concurrency-config \
   --function-name fastapi-books \
   --qualifier 1 \
   --provisioned-concurrent-executions 5
 ```
+
 :::
 
 ## Next steps

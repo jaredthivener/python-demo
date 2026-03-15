@@ -10,7 +10,9 @@
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write \"docs/**/*.{md,mdx}\" \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,md}\"",
+    "format:check": "prettier --check \"docs/**/*.{md,mdx}\" \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,md}\""
   },
   "dependencies": {
     "@docusaurus/core": "^3.5.2",
@@ -29,6 +31,7 @@
     "@docusaurus/module-type-aliases": "3.9.2",
     "@docusaurus/tsconfig": "3.9.2",
     "@docusaurus/types": "3.9.2",
+    "prettier": "^3.8.1",
     "typescript": "~5.9.3"
   },
   "engines": {

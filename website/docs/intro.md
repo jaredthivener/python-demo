@@ -4,36 +4,41 @@ sidebar_position: 1
 
 # Introduction
 
-**FastAPI Docs** is a reference implementation of production-grade FastAPI patterns for developers building cloud APIs. It covers three authentication strategies, a fully working CRUD API, and deployment guides for AWS, GCP, and Azure — each following the cloud provider's own best practices and official tooling.
+**Python Demo API** is a compact FastAPI demo that uses a realistic Books API to teach the API concepts discussed in the docs without turning the repository into a full production platform. The live app focuses on validation, pagination, PATCH behavior, monitoring, and request logging. The docs extend that foundation into auth and deployment guidance for AWS, GCP, and Azure.
 
 ## What you'll learn
 
-- How to structure a FastAPI project with Pydantic v2 models and reusable dependencies
+- How to structure a small FastAPI service with Pydantic v2 models and clear API boundaries
 - When to use JWT Bearer, Managed Identity, and Microsoft Entra ID — and how to combine them
-- How to deploy a containerised FastAPI app to AWS, GCP, and Azure with zero secrets in code
+- How to deploy a FastAPI app to AWS, GCP, and Azure with zero secrets in code
 - Cloud-native observability: Lambda Powertools (AWS), Cloud Logging + OpenTelemetry (GCP), and Azure Monitor (Azure)
+
+## What the live app actually covers
+
+- CRUD and search on a simple Books resource
+- Request validation and typed responses
+- Partial updates with `PATCH`
+- Health, status, and redirect endpoints
+- Rich access logging and optional demo-only error injection
 
 ## What's included
 
-| Component | Description |
-|---|---|
-| `demo/` | Books CRUD API — 6 endpoints, Pydantic v2, pagination, 422 validation |
-| `demo/routers/books.py` | Full REST router with `PATCH` partial updates and typed responses |
-| `demo/dependencies.py` | `PaginationParams` class dependency, `get_book_or_404` |
-| `demo/models.py` | Pydantic v2 request/response models |
+| Component            | Description                                                                         |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| `main.py`            | Books API, request logging middleware, lifespan hooks, and local demo configuration |
+| `tests/test_main.py` | Behavioral coverage for the Books API and demo support endpoints                    |
+| `website/docs/`      | Auth, API, and deployment guidance for AWS, GCP, and Azure                          |
+| `website/src/`       | Docusaurus site shell and homepage components                                       |
 
 ## Project structure
 
-```
-fastapi-docs/
-├── demo/
-│   ├── main.py          # App factory, lifespan, CORS, health check
-│   ├── models.py        # Pydantic v2 request/response models
-│   ├── database.py      # In-memory store (swap for real DB)
-│   ├── dependencies.py  # Reusable Depends() callables
-│   └── routers/
-│       └── books.py     # CRUD + search endpoints
-└── pyproject.toml
+```text
+python-demo/
+├── main.py
+├── tests/
+├── pyproject.toml
+├── README.md
+└── website/
 ```
 
 ## Quick navigation

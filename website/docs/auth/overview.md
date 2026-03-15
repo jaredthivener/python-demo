@@ -100,15 +100,15 @@ async def admin_only(token: str = Depends(entra_oauth2)):
 
 ## Decision matrix
 
-| Scenario | Pattern |
-|---|---|
-| Public-facing REST API | Pattern 1 (JWT) |
-| Mobile or SPA frontend | Pattern 1 (JWT) |
-| App reads from Azure SQL | Pattern 2 (Managed Identity) |
+| Scenario                       | Pattern                      |
+| ------------------------------ | ---------------------------- |
+| Public-facing REST API         | Pattern 1 (JWT)              |
+| Mobile or SPA frontend         | Pattern 1 (JWT)              |
+| App reads from Azure SQL       | Pattern 2 (Managed Identity) |
 | App fetches secrets at startup | Pattern 2 (Managed Identity) |
-| Corporate internal tool | Pattern 3 (Entra ID) |
-| Teams / M365 integration | Pattern 3 (Entra ID) |
-| App needs DB **and** user auth | Patterns 2 + 1 or 2 + 3 |
+| Corporate internal tool        | Pattern 3 (Entra ID)         |
+| Teams / M365 integration       | Pattern 3 (Entra ID)         |
+| App needs DB **and** user auth | Patterns 2 + 1 or 2 + 3      |
 
 ## Security invariants (always true)
 

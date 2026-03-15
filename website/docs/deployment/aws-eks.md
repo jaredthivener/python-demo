@@ -43,7 +43,7 @@ metadata:
 spec:
   template:
     spec:
-      serviceAccountName: fastapi-sa   # <-- IRSA annotation lives here
+      serviceAccountName: fastapi-sa # <-- IRSA annotation lives here
       containers:
         - name: fastapi
           image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/fastapi-books:latest

@@ -1,153 +1,159 @@
-# Python FastAPI Demo
+# Python Demo API
 
-A colorful FastAPI server with rich logging, background traffic generation, and comprehensive endpoint examples for testing HTTP methods and error scenarios.
+[![CI](https://github.com/jaredthivener/python-demo/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jaredthivener/python-demo/actions/workflows/ci.yml)
+[![Python 3.14+](https://img.shields.io/badge/python-3.14%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.135-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Docs](https://img.shields.io/badge/docs-Docusaurus-2E8555?logo=docusaurus&logoColor=white)](https://docusaurus.io/)
 
-## Features
+A compact FastAPI demo app that covers the core API concepts discussed in the docs: validation, pagination, partial updates, rich logging, monitoring endpoints, and HTTP behavior. Authentication and multi-cloud deployment patterns remain in the documentation.
 
-- **Rich Console Logging**: Colorized, formatted access logs with response times, status codes, and request IDs
-- **Background Traffic Generator**: Simulates realistic traffic patterns to test your server
-- **HTTP Method Examples**: GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS
-- **Error Simulation**: Built-in endpoints for testing 400, 404, 500, and 503 responses
-- **Request Correlation**: X-Request-ID headers for request tracing
-- **Performance Metrics**: Response time tracking with visual indicators (green/yellow/red)
+## What this repo is now
+
+- A realistic in-memory resource API under `/api/v1/books`
+- Rich request logging with latency, size, status, client, and request IDs
+- Lightweight health, redirect, and method-demo endpoints for smoke testing and tooling demos
+- Optional background traffic generation for local demos
+- Optional forced-error headers for testing unhappy paths without creating fake routes
+
+## Scope boundary
+
+- The live app demonstrates API and observability concepts from the docs
+- The docs cover broader topics like JWT, managed identity, enterprise SSO, and cloud deployment guidance
+- The local demo does not provision cloud resources or implement full identity-provider integrations
 
 ## Prerequisites
 
 - Python 3.14 or higher
-- [uv](https://docs.astral.sh/uv/) - Modern Python package manager
+- [uv](https://docs.astral.sh/uv/)
 
 ## Setup
 
-### 1. Clone the Repository
-
 ```bash
-git clone https://github.com/jaredthivener/python-demo.git
-cd python-demo
-```
-
-### 2. Create a Virtual Environment and Install Dependencies
-
-```bash
-uv sync
+uv sync --group dev
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 ```
 
-This command will create a virtual environment and install all dependencies from `pyproject.toml`. The `.venv/bin/activate` step activates the environment so you can use the installed packages.
-
-## Running the Server
-
-Activate the virtual environment first (if not already activated):
-
-```bash
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-```
-
-Then start the development server with auto-reload:
+## Run the API
 
 ```bash
 uvicorn main:app --reload --no-access-log
 ```
 
-The server will be available at `http://127.0.0.1:8000`
+The API is available at `http://127.0.0.1:8000`.
 
-**API Documentation:**
-- **Swagger UI**: `http://127.0.0.1:8000/docs` - Interactive API explorer
-- **ReDoc**: `http://127.0.0.1:8000/redoc` - Alternative API documentation
+- Swagger UI: `http://127.0.0.1:8000/docs`
+- ReDoc: `http://127.0.0.1:8000/redoc`
 
-### Server Features
+## Optional demo switches
 
-- **Auto-reload**: The server automatically restarts when you modify `main.py`
-- **Background Traffic**: Once running, the server generates simulated traffic to itself
-- **Rich Logging**: All requests are logged with color-coded formatting
-
-## API Endpoints
-
-### Basic Endpoints
-
-- `GET /` - Returns a simple hello message
-- `GET /api/tags` - Returns a list of tags
-- `GET /api/ps` - Health check endpoint
-
-### Data Operations
-
-- `POST /api/pull` - Simulates a pull operation
-- `PUT /api/items/{id}` - Updates an item
-- `PATCH /api/items/{id}` - Partially updates an item
-- `DELETE /api/items/{id}` - Deletes an item
-
-### HTTP Method Tests
-
-- `HEAD /api/status` - Returns headers only
-- `OPTIONS /api/options` - Returns allowed methods
-
-### Error Simulation Endpoints
-
-- `GET /api/error/400` - Returns 400 Bad Request
-- `GET /api/error/404` - Returns 404 Not Found
-- `GET /api/error/500` - Returns 500 Internal Server Error
-- `GET /api/error/503` - Returns 503 Service Unavailable
-
-## Example Usage
+Enable background traffic generation:
 
 ```bash
-# Test GET endpoint
-curl http://127.0.0.1:8000/api/tags
-
-# Test POST endpoint
-curl -X POST http://127.0.0.1:8000/api/pull
-
-# Test error endpoint
-curl http://127.0.0.1:8000/api/error/404
+ENABLE_TRAFFIC_GENERATOR=true uvicorn main:app --reload --no-access-log
 ```
 
-## Development
+Enable forced error responses through the `X-Force-Error` header:
 
-### Project Structure
-
-```
-python-demo/
-├── main.py              # Main application file
-├── requirements.txt     # Python dependencies
-├── README.md           # This file
-└── .venv/              # Virtual environment (ignored by git)
+```bash
+ENABLE_CHAOS_HEADERS=true uvicorn main:app --reload --no-access-log
 ```
 
-### Configuration
+Allowed forced error codes are `400`, `404`, `409`, `500`, and `503`.
 
-Key settings in `main.py`:
+## API surface
 
-- `WARN_MS`: Response time threshold for yellow warning (default: 100ms)
-- `SLOW_MS`: Response time threshold for red slow indicator (default: 500ms)
-- `SERVER_PORT`: Port for background traffic generation (default: 8000)
+### Core endpoints
+
+- `GET /` returns API metadata and local docs links
+- `GET /api/ps` returns a health payload and book count
+- `HEAD /api/status` returns `X-System-Status: OK`
+- `OPTIONS /api/options` returns supported methods
+- `GET /api/redirect` returns a `307` to a seeded book
+
+### Books API
+
+Base URL: `http://127.0.0.1:8000/api/v1`
+
+- `GET /books?skip=0&limit=20` lists books with pagination
+- `GET /books/search?q=code` searches title and author fields
+- `POST /books` creates a book
+- `GET /books/{book_id}` fetches a single book
+- `PATCH /books/{book_id}` applies a partial update
+- `DELETE /books/{book_id}` deletes a book
+
+## Example usage
+
+```bash
+# List books
+curl "http://127.0.0.1:8000/api/v1/books?skip=0&limit=10"
+
+# Create a book
+curl -X POST http://127.0.0.1:8000/api/v1/books \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Refactoring",
+    "author": "Martin Fowler",
+    "year": 2018
+  }'
+
+# Partial update
+curl -X PATCH http://127.0.0.1:8000/api/v1/books/3fa85f64-5717-4562-b3fc-2c963f66afa6 \
+  -H "Content-Type: application/json" \
+  -d '{"year": 2022}'
+
+# Search
+curl "http://127.0.0.1:8000/api/v1/books/search?q=martin"
+
+# Forced error demo
+curl http://127.0.0.1:8000/api/v1/books \
+  -H "X-Force-Error: 503"
+```
+
+## Run tests
+
+```bash
+uv run pytest
+```
+
+## Quality checks
+
+```bash
+uv run ruff check .
+uv run ruff format --check .
+cd website && npm run format:check && npm run typecheck && npm run build
+```
+
+To apply formatting locally:
+
+```bash
+uv run ruff format .
+cd website && npm run format
+```
 
 ## Logging
 
-The application uses Rich for beautiful console logging. Each request line includes:
+Every request is logged with:
 
 - Timestamp
-- Status code (color-coded: green 2xx, cyan 3xx, yellow 4xx, red 5xx)
-- Response time in milliseconds
+- Status code
+- Latency
 - Response size
 - Client IP
-- HTTP method (color-coded by method type)
+- HTTP method
 - Request path
-- Request ID for correlation
+- `X-Request-ID`
 
-## Stopping the Server
+## Project layout
 
-Press `CTRL+C` to stop the development server.
+```text
+python-demo/
+├── main.py
+├── tests/
+├── pyproject.toml
+├── README.md
+└── website/
+```
 
-## Dependencies
+## Next layer
 
-- **fastapi**: Modern web framework for building APIs
-- **uvicorn**: ASGI server for running FastAPI
-- **httpx**: Async HTTP client for background traffic generation
-- **rich**: Beautiful terminal rendering and logging
-
-## License
-
-MIT
-
-## Support
-
-For issues or questions, please open an issue on the GitHub repository.
+The website under `website/` contains the broader auth and multi-cloud deployment guidance. The backend and README now define the local source of truth for the live demo API.

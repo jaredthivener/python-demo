@@ -63,7 +63,7 @@ metadata:
 spec:
   template:
     spec:
-      serviceAccountName: fastapi-sa   # <-- Workload Identity annotation lives here
+      serviceAccountName: fastapi-sa # <-- Workload Identity annotation lives here
       containers:
         - name: fastapi
           image: us-central1-docker.pkg.dev/my-project/fastapi-repo/fastapi-books:latest

@@ -8,14 +8,14 @@ Deploy FastAPI to AWS with zero long-lived credentials using IAM Roles for Servi
 
 ## Choose your target
 
-| | Lambda + Mangum | ECS Fargate | Elastic Beanstalk |
-|---|---|---|---|
-| **Cost at idle** | $0 (pay per invocation) | ~$30+/month | ~$20+/month (t3.micro) |
-| **Cold start?** | Yes (mitigable with provisioned) | No | No |
-| **IAM auth** | Lambda execution role | Task role (ECS task IAM role) | Instance profile |
-| **Container support** | Yes (container image) | Native | Yes (Docker platform) |
-| **Custom networking** | VPC Lambda | Full VPC | VPC |
-| **Best for** | Event-driven / spiky traffic | Long-running containers | Monolithic web APIs |
+|                       | Lambda + Mangum                  | ECS Fargate                   | Elastic Beanstalk      |
+| --------------------- | -------------------------------- | ----------------------------- | ---------------------- |
+| **Cost at idle**      | $0 (pay per invocation)          | ~$30+/month                   | ~$20+/month (t3.micro) |
+| **Cold start?**       | Yes (mitigable with provisioned) | No                            | No                     |
+| **IAM auth**          | Lambda execution role            | Task role (ECS task IAM role) | Instance profile       |
+| **Container support** | Yes (container image)            | Native                        | Yes (Docker platform)  |
+| **Custom networking** | VPC Lambda                       | Full VPC                      | VPC                    |
+| **Best for**          | Event-driven / spiky traffic     | Long-running containers       | Monolithic web APIs    |
 
 ---
 
@@ -130,19 +130,21 @@ Fargate runs containers without managing EC2 instances. Each task gets an IAM ro
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
   "memory": "1024",
-  "containerDefinitions": [{
-    "name": "fastapi",
-    "image": "123456789012.dkr.ecr.us-east-1.amazonaws.com/fastapi-books:latest",
-    "portMappings": [{ "containerPort": 8000 }],
-    "logConfiguration": {
-      "logDriver": "awslogs",
-      "options": {
-        "awslogs-group": "/ecs/fastapi-books",
-        "awslogs-region": "us-east-1",
-        "awslogs-stream-prefix": "ecs"
+  "containerDefinitions": [
+    {
+      "name": "fastapi",
+      "image": "123456789012.dkr.ecr.us-east-1.amazonaws.com/fastapi-books:latest",
+      "portMappings": [{ "containerPort": 8000 }],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/fastapi-books",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
       }
     }
-  }]
+  ]
 }
 ```
 
@@ -230,7 +232,7 @@ metadata:
 spec:
   template:
     spec:
-      serviceAccountName: fastapi-sa   # <-- IRSA annotation lives here
+      serviceAccountName: fastapi-sa # <-- IRSA annotation lives here
       containers:
         - name: fastapi
           image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/fastapi-books:latest

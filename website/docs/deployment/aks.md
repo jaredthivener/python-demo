@@ -98,9 +98,9 @@ spec:
     metadata:
       labels:
         app: fastapi-books
-        azure.workload.identity/use: "true"   # ← required label
+        azure.workload.identity/use: "true" # ← required label
     spec:
-      serviceAccountName: fastapi-sa           # ← federated service account
+      serviceAccountName: fastapi-sa # ← federated service account
       containers:
         - name: fastapi
           image: myacr.azurecr.io/fastapi-books:latest

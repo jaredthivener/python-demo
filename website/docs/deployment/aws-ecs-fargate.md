@@ -24,19 +24,21 @@ Deploy FastAPI on AWS Fargate — managed containers without EC2 instances to pa
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
   "memory": "1024",
-  "containerDefinitions": [{
-    "name": "fastapi",
-    "image": "123456789012.dkr.ecr.us-east-1.amazonaws.com/fastapi-books:latest",
-    "portMappings": [{ "containerPort": 8000 }],
-    "logConfiguration": {
-      "logDriver": "awslogs",
-      "options": {
-        "awslogs-group": "/ecs/fastapi-books",
-        "awslogs-region": "us-east-1",
-        "awslogs-stream-prefix": "ecs"
+  "containerDefinitions": [
+    {
+      "name": "fastapi",
+      "image": "123456789012.dkr.ecr.us-east-1.amazonaws.com/fastapi-books:latest",
+      "portMappings": [{ "containerPort": 8000 }],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/fastapi-books",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
       }
     }
-  }]
+  ]
 }
 ```
 
