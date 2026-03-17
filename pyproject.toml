@@ -9,7 +9,7 @@ authors = [{name = "Jared Thivener"}]
 
 dependencies = [
     "fastapi==0.135.1",
-    "uvicorn[standard]==0.41.0",
+    "uvicorn[standard]==0.42.0",
     "httpx==0.28.1",
     "rich==14.3.3",
 ]
