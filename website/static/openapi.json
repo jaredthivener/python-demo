@@ -396,11 +396,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  },
-                  "title": "Response Delete Book Api V1 Books  Book Id  Delete"
+                  "$ref": "#/components/schemas/DeleteResponse"
                 }
               }
             }
@@ -566,6 +562,19 @@
         },
         "type": "object",
         "title": "BookUpdate"
+      },
+      "DeleteResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "DeleteResponse"
       },
       "HTTPValidationError": {
         "properties": {
