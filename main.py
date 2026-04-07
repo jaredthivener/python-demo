@@ -107,6 +107,10 @@ class RootMetadata(BaseModel):
     chaos_headers_enabled: bool
 
 
+class DeleteResponse(BaseModel):
+    message: str
+
+
 class InMemoryBookStore:
     def __init__(self, books: dict[UUID, BookResponse] | None = None) -> None:
         self._books: dict[UUID, BookResponse] = dict(books or {})
@@ -508,9 +512,9 @@ async def update_book(request: Request, book_id: UUID, payload: BookUpdate) -> B
     return get_book_store(request).update(book_id, payload)
 
 
-@app.delete("/api/v1/books/{book_id}", tags=["Books API"])
-async def delete_book(request: Request, book_id: UUID) -> dict[str, str]:
+@app.delete("/api/v1/books/{book_id}", response_model=DeleteResponse, tags=["Books API"])
+async def delete_book(request: Request, book_id: UUID) -> DeleteResponse:
     """Delete a book from the in-memory store."""
     maybe_force_error(request)
     get_book_store(request).delete(book_id)
-    return {"message": f"Book {book_id} deleted successfully"}
+    return DeleteResponse(message=f"Book {book_id} deleted successfully")
