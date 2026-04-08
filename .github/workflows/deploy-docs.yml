@@ -22,6 +22,10 @@ jobs:
   build:
     name: Build Docusaurus site
     runs-on: ubuntu-latest
+    env:
+      # Workaround: actions/upload-pages-artifact@v4 internally pins upload-artifact@v4.6.2 (Node 20).
+      # Remove once https://github.com/actions/upload-pages-artifact/issues/138 is resolved.
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     defaults:
       run:
         working-directory: website
@@ -43,7 +47,7 @@ jobs:
         run: npm run build
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v5
+        uses: actions/upload-pages-artifact@v4
         with:
           path: website/build
 
