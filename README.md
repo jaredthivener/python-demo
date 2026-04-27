@@ -2,7 +2,7 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jaredthivener/python-demo/ci.yml?branch=main&label=CI)](https://github.com/jaredthivener/python-demo/actions/workflows/ci.yml)
 [![Python 3.14+](https://img.shields.io/badge/python-3.14%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/downloads/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.135-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.136-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Docs](https://img.shields.io/badge/docs-Docusaurus-2E8555?logo=docusaurus&logoColor=white)](https://docusaurus.io/)
 
 A compact FastAPI demo app that covers the core API concepts discussed in the docs: validation, pagination, partial updates, rich logging, monitoring endpoints, and HTTP behavior. Authentication and multi-cloud deployment patterns remain in the documentation.
