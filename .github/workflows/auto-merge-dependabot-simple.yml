@@ -21,7 +21,7 @@ jobs:
     name: Auto Merge Dependabot PR
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Enable auto-merge for Dependabot PRs
         run: |
