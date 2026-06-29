@@ -8,7 +8,7 @@ license = {text = "MIT"}
 authors = [{name = "Jared Thivener"}]
 
 dependencies = [
-    "fastapi==0.138.1",
+    "fastapi==0.138.2",
     "uvicorn[standard]==0.49.0",
     "httpx==0.28.1",
     "rich==15.0.0",
