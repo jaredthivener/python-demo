@@ -77,7 +77,7 @@
           "HTTP Behaviors"
         ],
         "summary": "Options Test",
-        "description": "Return supported methods for quick HTTP tooling demos.",
+        "description": "Return the methods used across this API in the Allow header (OPTIONS demo).",
         "operationId": "options_test_api_options_options",
         "responses": {
           "200": {
@@ -218,17 +218,6 @@
         "operationId": "search_books_api_v1_books_search_get",
         "parameters": [
           {
-            "name": "q",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 100,
-              "title": "Q"
-            }
-          },
-          {
             "name": "skip",
             "in": "query",
             "required": false,
@@ -249,6 +238,17 @@
               "minimum": 1,
               "default": 20,
               "title": "Limit"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "title": "Q"
             }
           }
         ],
@@ -438,13 +438,15 @@
             "title": "Year"
           }
         },
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "title",
           "author",
           "year"
         ],
-        "title": "BookCreate"
+        "title": "BookCreate",
+        "description": "Request body for creating a book; unknown fields are rejected."
       },
       "BookListResponse": {
         "properties": {
@@ -475,7 +477,8 @@
           "skip",
           "limit"
         ],
-        "title": "BookListResponse"
+        "title": "BookListResponse",
+        "description": "One page of books plus the paging metadata."
       },
       "BookResponse": {
         "properties": {
@@ -516,7 +519,8 @@
           "id",
           "created_at"
         ],
-        "title": "BookResponse"
+        "title": "BookResponse",
+        "description": "A stored book as returned by the API."
       },
       "BookUpdate": {
         "properties": {
@@ -560,8 +564,10 @@
             "title": "Year"
           }
         },
+        "additionalProperties": false,
         "type": "object",
-        "title": "BookUpdate"
+        "title": "BookUpdate",
+        "description": "Request body for a partial update; omitted fields are left unchanged."
       },
       "DeleteResponse": {
         "properties": {
@@ -574,7 +580,8 @@
         "required": [
           "message"
         ],
-        "title": "DeleteResponse"
+        "title": "DeleteResponse",
+        "description": "Confirmation message returned after a delete."
       },
       "HTTPValidationError": {
         "properties": {
@@ -593,6 +600,7 @@
         "properties": {
           "status": {
             "type": "string",
+            "const": "ok",
             "title": "Status"
           },
           "books": {
@@ -615,7 +623,8 @@
           "traffic_generator_enabled",
           "chaos_headers_enabled"
         ],
-        "title": "HealthResponse"
+        "title": "HealthResponse",
+        "description": "Payload for the lightweight health endpoint."
       },
       "RootMetadata": {
         "properties": {
@@ -658,7 +667,8 @@
           "traffic_generator_enabled",
           "chaos_headers_enabled"
         ],
-        "title": "RootMetadata"
+        "title": "RootMetadata",
+        "description": "Payload describing the API and its documentation links."
       },
       "ValidationError": {
         "properties": {

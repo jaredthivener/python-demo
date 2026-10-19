@@ -118,7 +118,7 @@ spec:
               memory: "512Mi"
           readinessProbe:
             httpGet:
-              path: /health
+              path: /api/ps
               port: 8000
             initialDelaySeconds: 5
             periodSeconds: 10

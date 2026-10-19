@@ -88,6 +88,16 @@
       "summary": "Quick local setup for the Python Demo API, including dependency install, running the FastAPI server, and verifying the Books API."
     },
     {
+      "id": "how-it-works",
+      "title": "How the Demo Works",
+      "category": "overview",
+      "canonicalUrl": "https://jaredthivener.github.io/python-demo/docs/how-it-works",
+      "sourcePath": "website/docs/how-it-works.md",
+      "rawMarkdownUrl": "https://raw.githubusercontent.com/jaredthivener/python-demo/main/website/docs/how-it-works.md",
+      "priority": "high",
+      "summary": "A guided tour of main.py covering routers, dependency injection, validation, the request-ID middleware, lifespan hooks, and how the test suite protects each behavior."
+    },
+    {
       "id": "intro",
       "title": "Introduction",
       "category": "overview",

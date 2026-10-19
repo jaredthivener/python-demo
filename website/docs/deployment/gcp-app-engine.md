@@ -15,8 +15,8 @@ App Engine Standard uses the default App Engine service account bound to your ap
 ## `app.yaml`
 
 ```yaml
-runtime: python313
-entrypoint: uvicorn demo.main:app --host 0.0.0.0 --port $PORT
+runtime: python314
+entrypoint: uvicorn main:app --host 0.0.0.0 --port $PORT
 
 env_variables:
   GCP_PROJECT: "my-project"

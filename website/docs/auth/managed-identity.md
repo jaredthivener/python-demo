@@ -48,6 +48,7 @@ import boto3
 import json
 from functools import lru_cache
 
+
 @lru_cache
 def get_secret(secret_name: str) -> dict:
     """No credentials needed — Lambda/ECS/IRSA role is resolved automatically."""
@@ -97,6 +98,7 @@ Application Default Credentials (ADC) resolves the bound service account:
 from google.cloud import secretmanager
 import os
 
+
 def get_secret(secret_id: str) -> str:
     """ADC resolves the Cloud Run / GKE / App Engine identity automatically."""
     client = secretmanager.SecretManagerServiceClient()
@@ -137,6 +139,7 @@ import struct
 import pyodbc
 from azure.identity import DefaultAzureCredential
 
+
 def get_sql_connection() -> pyodbc.Connection:
     credential = DefaultAzureCredential()
     token = credential.get_token("https://database.windows.net/.default").token
@@ -172,6 +175,7 @@ from fastapi import FastAPI
 
 VAULT_URL = os.environ["AZURE_KEYVAULT_URL"]
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     credential = DefaultAzureCredential()
@@ -179,6 +183,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.jwt_secret = client.get_secret("jwt-signing-key").value
     app.state.db_password = client.get_secret("sql-password").value
     yield
+
 
 app = FastAPI(lifespan=lifespan)
 ```
@@ -294,7 +299,7 @@ For local dev, run `az login` and set `AZURE_KEYVAULT_URL`:
 ```bash
 az login
 export AZURE_KEYVAULT_URL=https://myvault.vault.azure.net/
-uv run uvicorn demo.main:app --reload
+uv run uvicorn main:app --reload
 ```
 
 `DefaultAzureCredential` will use your CLI session to fetch Key Vault secrets exactly as it would in production.

@@ -34,7 +34,7 @@ uv add mangum
 ```python
 # lambda_handler.py
 from mangum import Mangum
-from demo.main import app   # your FastAPI app
+from main import app  # your FastAPI app
 
 handler = Mangum(app, lifespan="off")
 ```
@@ -105,10 +105,11 @@ import boto3
 import json
 from functools import lru_cache
 
+
 @lru_cache
 def get_secret(secret_name: str) -> dict:
     """Retrieve a secret from Secrets Manager using the Lambda IAM role."""
-    client = boto3.client("secretsmanager")          # no credentials needed
+    client = boto3.client("secretsmanager")  # no credentials needed
     response = client.get_secret_value(SecretId=secret_name)
     return json.loads(response["SecretString"])
 ```
@@ -254,6 +255,7 @@ from contextlib import asynccontextmanager
 from typing import AsyncIterator
 from fastapi import FastAPI
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     client = boto3.client("secretsmanager", region_name=os.getenv("AWS_REGION", "us-east-1"))
@@ -261,6 +263,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     data = json.loads(secret["SecretString"])
     app.state.jwt_secret = data["jwt_secret"]
     yield
+
 
 app = FastAPI(lifespan=lifespan)
 ```

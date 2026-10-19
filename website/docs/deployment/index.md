@@ -57,14 +57,28 @@ See [Cloud IAM / Workload Identity](../auth/managed-identity.md) for how each cl
 ## Dockerfile (works on all clouds)
 
 ```dockerfile
-FROM python:3.13-slim
+FROM python:3.14-slim
+COPY --from=ghcr.io/astral-sh/uv:0.13.1 /uv /usr/local/bin/uv
+ENV UV_PYTHON_DOWNLOADS=never PATH="/app/.venv/bin:$PATH"
 WORKDIR /app
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 COPY pyproject.toml uv.lock ./
-RUN uv sync --extra demo --frozen --no-dev
-COPY demo ./demo
-CMD ["uv", "run", "uvicorn", "demo.main:app", "--host", "0.0.0.0", "--port", "8000"]
+RUN uv sync --frozen --no-dev
+COPY main.py ./
+USER nobody
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
 ```
+
+This is the same `Dockerfile` checked in at the repo root, and CI builds it on every pull request so the docs cannot drift from it.
+
+:::note Python 3.14
+The app requires Python 3.14+. If a managed runtime on your platform does not offer 3.14 yet, deploy the container image above instead.
+:::
+
+:::warning State is per process
+The Books store is an in-memory dict. Every worker process and every replica gets its own copy, so `--workers 4`, autoscaling, or more than one replica will return different data on different requests. Swap in a shared database before scaling out.
+:::
+
+Health checks and probes should point at `GET /api/ps`.
 
 ## Pick a guide
 

@@ -84,6 +84,7 @@ Application Default Credentials (ADC) automatically picks up the Cloud Run servi
 from google.cloud import secretmanager
 import os
 
+
 def get_secret(secret_id: str) -> str:
     """Fetch a secret from Secret Manager using ADC (no credentials needed)."""
     client = secretmanager.SecretManagerServiceClient()  # ADC resolves automatically
@@ -101,8 +102,8 @@ App Engine Standard uses the default App Engine service account bound to your ap
 
 ```yaml
 # app.yaml
-runtime: python313
-entrypoint: uvicorn demo.main:app --host 0.0.0.0 --port $PORT
+runtime: python314
+entrypoint: uvicorn main:app --host 0.0.0.0 --port $PORT
 
 env_variables:
   GCP_PROJECT: "my-project"
@@ -202,6 +203,7 @@ from typing import AsyncIterator
 from google.cloud import secretmanager
 from fastapi import FastAPI
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     client = secretmanager.SecretManagerServiceClient()
@@ -214,6 +216,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.jwt_secret = _get("jwt-signing-key")
     app.state.db_password = _get("db-password")
     yield
+
 
 app = FastAPI(lifespan=lifespan)
 ```

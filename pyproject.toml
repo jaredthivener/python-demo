@@ -1,6 +1,6 @@
 [project]
 name = "python-demo"
-version = "0.1.0"
+version = "0.3.0"
 description = "A colorful FastAPI server with rich logging and background traffic generation"
 readme = "README.md"
 requires-python = ">=3.14"
@@ -20,15 +20,24 @@ dev = [
     "ruff>=0.17.1",
 ]
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
 [tool.ruff]
 target-version = "py314"
 line-length = 100
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+# PEP 8 (E, W), naming, pyupgrade, bugbear, simplify, and PEP 257 docstrings (D).
+select = ["E", "F", "I", "W", "N", "UP", "B", "SIM", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
 
 [tool.ruff.lint.per-file-ignores]
-"tests/test_main.py" = ["E402"]
+# Docstrings are required for the app and scripts, not for test functions.
+"tests/**" = ["D"]
 
 [tool.ruff.format]
 quote-style = "double"

@@ -38,7 +38,7 @@ You wrap your FastAPI app once at module level (`Mangum(app, lifespan="off")`), 
 from mangum import Mangum
 from aws_lambda_powertools import Logger, Tracer, Metrics
 from aws_lambda_powertools.metrics import MetricUnit  # noqa: F401 — used by routes
-from demo.main import app
+from main import app
 
 logger = Logger(service="fastapi-books")
 tracer = Tracer(service="fastapi-books")

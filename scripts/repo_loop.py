@@ -1,3 +1,5 @@
+"""Run the repo fix and check loops that CI and the git hooks share."""
+
 from __future__ import annotations
 
 import argparse
@@ -13,6 +15,8 @@ WEBSITE_DIR: Final = ROOT / "website"
 
 @dataclass(frozen=True)
 class Step:
+    """One command in the loop, with the directory it runs in."""
+
     name: str
     command: tuple[str, ...]
     cwd: Path
@@ -93,6 +97,7 @@ CHECK_SCOPES: Final[dict[str, tuple[Step, ...]]] = {
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse the loop mode (fix or check) and the scope to run."""
     parser = argparse.ArgumentParser(
         description="Run the repo automation loop in fix or check mode."
     )
@@ -111,6 +116,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def steps_for(mode: str, scope: str) -> tuple[Step, ...]:
+    """Return the ordered steps for a mode and scope; fix mode only supports full scope."""
     if mode == "fix":
         if scope != "full":
             raise ValueError("fix mode only supports the full scope")
@@ -119,12 +125,14 @@ def steps_for(mode: str, scope: str) -> tuple[Step, ...]:
 
 
 def run_step(step: Step) -> None:
+    """Print and run one step, raising if it fails."""
     command_preview = shlex.join(step.command)
     print(f"[{step.name}] {command_preview}")
     subprocess.run(step.command, cwd=step.cwd, check=True)
 
 
 def main() -> int:
+    """Run every step for the requested mode and scope; return a process exit code."""
     args = parse_args()
     steps = steps_for(mode=args.mode, scope=args.scope)
     for step in steps:
