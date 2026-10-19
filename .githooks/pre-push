@@ -4,17 +4,19 @@ set -euo pipefail
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 
-current_branch="$(git rev-parse --abbrev-ref HEAD)"
-
-echo "[pre-push] Running full validation loop (make check)..."
-make check
-
-if [[ "$current_branch" == "main" && "${ALLOW_PROD_PUSH:-false}" != "true" ]]; then
-	cat <<'EOF'
+# Git passes "<local ref> <local sha> <remote ref> <remote sha>" per pushed ref on stdin.
+# Check the destination ref, not the current branch, so `git push origin feature:main` is caught.
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+	if [[ "$remote_ref" == "refs/heads/main" && "${ALLOW_PROD_PUSH:-false}" != "true" ]]; then
+		cat <<'MSG'
 [pre-push] Push to main is blocked by default.
 
 Set ALLOW_PROD_PUSH=true for an explicit, intentional production push:
 	ALLOW_PROD_PUSH=true git push origin main
-EOF
-	exit 1
-fi
+MSG
+		exit 1
+	fi
+done
+
+echo "[pre-push] Running full validation loop (make check)..."
+make check
