@@ -1,3 +1,5 @@
+"""Generate the checked-in machine-readable artifacts (OpenAPI, docs index, llms.txt)."""
+
 from __future__ import annotations
 
 import argparse
@@ -34,6 +36,8 @@ PRIMARY_DOC_IDS: Final = (
 
 @dataclass(frozen=True)
 class DocumentEntry:
+    """One documentation page as it appears in the generated docs index."""
+
     doc_id: str
     title: str
     category: str
@@ -46,6 +50,7 @@ class DocumentEntry:
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse the command line; --check verifies files instead of writing them."""
     parser = argparse.ArgumentParser(
         description="Generate machine-readable artifacts for docs and API ingestion."
     )
@@ -58,6 +63,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def parse_frontmatter(text: str) -> tuple[dict[str, str | list[str]], str]:
+    """Split Markdown into its simple frontmatter (scalars and lists) and its body."""
     match = FRONTMATTER_PATTERN.match(text)
     if not match:
         return {}, text
@@ -97,10 +103,12 @@ def parse_frontmatter(text: str) -> tuple[dict[str, str | list[str]], str]:
 
 
 def read_markdown(path: Path) -> tuple[dict[str, str | list[str]], str]:
+    """Read a Markdown file and return its frontmatter and body."""
     return parse_frontmatter(path.read_text(encoding="utf-8"))
 
 
 def extract_title(body: str, path: Path) -> str:
+    """Return the first level-1 heading, which every docs page must have."""
     match = HEADING_PATTERN.search(body)
     if match:
         return match.group("title").strip()
@@ -108,6 +116,7 @@ def extract_title(body: str, path: Path) -> str:
 
 
 def extract_summary(frontmatter: dict[str, str | list[str]], body: str) -> str:
+    """Return the frontmatter description, or fall back to the first paragraph."""
     description = frontmatter.get("description")
     if isinstance(description, str) and description:
         return description
@@ -125,7 +134,7 @@ def extract_summary(frontmatter: dict[str, str | list[str]], body: str) -> str:
             if paragraph_lines:
                 break
             continue
-        if stripped.startswith("#") or stripped.startswith("```") or stripped.startswith(":::"):
+        if stripped.startswith(("#", "```", ":::")):
             if paragraph_lines:
                 break
             continue
@@ -137,18 +146,21 @@ def extract_summary(frontmatter: dict[str, str | list[str]], body: str) -> str:
 
 
 def category_for_path(relative_path: Path) -> str:
+    """Return the top-level docs folder, or "overview" for pages at the docs root."""
     if len(relative_path.parts) == 1:
         return "overview"
     return relative_path.parts[0]
 
 
 def document_id_for_path(relative_path: Path) -> str:
+    """Build a stable ID from the docs path; index pages become "<folder>-overview"."""
     if relative_path.name == "index.md":
         return f"{relative_path.parent.as_posix()}-overview"
     return relative_path.with_suffix("").as_posix().replace("/", "-")
 
 
 def canonical_doc_path(relative_path: Path) -> str:
+    """Return the site URL path for a docs page, without the domain."""
     if relative_path.name == "index.md":
         if relative_path.parent == Path("."):
             return "/docs"
@@ -157,6 +169,7 @@ def canonical_doc_path(relative_path: Path) -> str:
 
 
 def priority_for_path(doc_id: str, relative_path: Path) -> str:
+    """Rank a page as critical, high, medium, or low for ingestion order."""
     overrides = {
         "api-books": "critical",
         "intro": "high",
@@ -177,12 +190,14 @@ def priority_for_path(doc_id: str, relative_path: Path) -> str:
 
 
 def related_artifacts_for_doc(doc_id: str) -> tuple[str, ...]:
+    """Return machine-readable artifacts that belong with a page."""
     if doc_id == "api-books":
         return (f"{SITE_BASE_URL}/openapi.json",)
     return ()
 
 
 def build_document_entry(path: Path) -> DocumentEntry:
+    """Build the index entry for one Markdown file under website/docs."""
     relative_path = path.relative_to(DOCS_DIR)
     frontmatter, body = read_markdown(path)
     doc_id = document_id_for_path(relative_path)
@@ -201,11 +216,13 @@ def build_document_entry(path: Path) -> DocumentEntry:
 
 
 def build_documents() -> list[DocumentEntry]:
+    """Index every docs page, ordered by priority and then by path."""
     documents = [build_document_entry(path) for path in sorted(DOCS_DIR.rglob("*.md"))]
     return sorted(documents, key=lambda doc: (PRIORITY_RANK[doc.priority], doc.source_path))
 
 
 def build_docs_index(documents: list[DocumentEntry]) -> dict[str, object]:
+    """Serialize the document entries into the docs-index.json structure."""
     serialized_documents: list[dict[str, object]] = []
     for document in documents:
         entry: dict[str, object] = {
@@ -257,6 +274,7 @@ def build_docs_index(documents: list[DocumentEntry]) -> dict[str, object]:
 
 
 def build_llms_text(documents: list[DocumentEntry]) -> str:
+    """Render llms.txt, the concise entry point for crawlers and LLM tooling."""
     docs_by_id = {document.doc_id: document for document in documents}
     primary_docs = [docs_by_id[doc_id] for doc_id in PRIMARY_DOC_IDS if doc_id in docs_by_id]
 
@@ -308,12 +326,14 @@ def build_llms_text(documents: list[DocumentEntry]) -> str:
 
 
 def build_openapi_json() -> str:
+    """Render the live FastAPI app's OpenAPI schema as JSON text."""
     from main import app
 
     return json.dumps(app.openapi(), indent=2) + "\n"
 
 
 def write_or_check(path: Path, content: str, check: bool) -> bool:
+    """Write a file, or in check mode report whether it is out of date; return success."""
     if check:
         if not path.exists() or path.read_text(encoding="utf-8") != content:
             print(f"Artifact is out of date: {path.relative_to(ROOT).as_posix()}")
@@ -327,6 +347,7 @@ def write_or_check(path: Path, content: str, check: bool) -> bool:
 
 
 def main() -> int:
+    """Generate or verify all artifacts; return a process exit code."""
     args = parse_args()
     documents = build_documents()
     docs_index = json.dumps(build_docs_index(documents), indent=2) + "\n"
