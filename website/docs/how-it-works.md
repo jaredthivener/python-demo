@@ -78,7 +78,7 @@ updated = BookResponse.model_validate(merged)
 
 ## 6. Lifespan and the traffic generator
 
-`lifespan` starts `generate_traffic()` as a background task when `ENABLE_TRAFFIC_GENERATOR` is on and cancels it on shutdown. `generate_traffic` accepts an optional `httpx` transport, which is how the tests drive it with `httpx.MockTransport` instead of a real server.
+`lifespan` starts `generate_traffic()` as a background task when `ENABLE_TRAFFIC_GENERATOR` is on and cancels it on shutdown. `generate_traffic` accepts an optional `httpx2` transport, which is how the tests drive it with `httpx2.MockTransport` instead of a real server.
 
 Tests: `test_lifespan_starts_and_stops_traffic_generator`, `test_traffic_generator_survives_request_errors`.
 

@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from uuid import UUID
 
-import httpx
+import httpx2
 import pytest
 from fastapi.testclient import TestClient
 from rich.console import Console
@@ -351,19 +351,45 @@ def test_env_flag(monkeypatch: pytest.MonkeyPatch, raw: str | None, expected: bo
     assert main.env_flag("FLAG") is expected
 
 
+REPO_ROOT = Path(main.__file__).parent
+
+
+def pinned_fastapi_version() -> str:
+    dependencies = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text())["project"][
+        "dependencies"
+    ]
+    (pin,) = [dep for dep in dependencies if dep.startswith("fastapi==")]
+    return pin.removeprefix("fastapi==")
+
+
 def test_app_version_matches_pyproject() -> None:
-    pyproject = tomllib.loads((Path(main.__file__).parent / "pyproject.toml").read_text())
+    pyproject = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text())
 
     assert pyproject["project"]["version"] == main.APP_VERSION
+
+
+def test_docs_state_the_pinned_fastapi_version() -> None:
+    version = pinned_fastapi_version()
+    major_minor = ".".join(version.split(".")[:2])
+
+    assert f"FastAPI ({version})" in (REPO_ROOT / "AGENTS.md").read_text()
+    assert f"badge/FastAPI-{major_minor}-" in (REPO_ROOT / "README.md").read_text()
+
+
+def test_deployment_docs_dockerfile_matches_the_repo_dockerfile() -> None:
+    docs = (REPO_ROOT / "website/docs/deployment/index.md").read_text()
+    block = docs.split("```dockerfile\n", 1)[1].split("```", 1)[0]
+
+    assert block.strip() == (REPO_ROOT / "Dockerfile").read_text().strip()
 
 
 # ---------------- Traffic generator ----------------
 def test_traffic_generator_requests_known_paths(monkeypatch: pytest.MonkeyPatch) -> None:
     seen: list[str] = []
 
-    def handler(request: httpx.Request) -> httpx.Response:
+    def handler(request: httpx2.Request) -> httpx2.Response:
         seen.append(request.url.path)
-        return httpx.Response(200)
+        return httpx2.Response(200)
 
     real_sleep = asyncio.sleep
 
@@ -373,9 +399,10 @@ def test_traffic_generator_requests_known_paths(monkeypatch: pytest.MonkeyPatch)
     monkeypatch.setattr(main.asyncio, "sleep", fast_sleep)
 
     async def run() -> None:
-        task = asyncio.create_task(main.generate_traffic(transport=httpx.MockTransport(handler)))
-        while len(seen) < 5:
-            await real_sleep(0)
+        task = asyncio.create_task(main.generate_traffic(transport=httpx2.MockTransport(handler)))
+        async with asyncio.timeout(5):  # fail fast instead of hanging if nothing is sent
+            while len(seen) < 5:
+                await real_sleep(0)
         task.cancel()
         with pytest.raises(asyncio.CancelledError):
             await task
@@ -395,10 +422,10 @@ def test_traffic_generator_requests_known_paths(monkeypatch: pytest.MonkeyPatch)
 def test_traffic_generator_survives_request_errors(monkeypatch: pytest.MonkeyPatch) -> None:
     calls = 0
 
-    def handler(request: httpx.Request) -> httpx.Response:
+    def handler(request: httpx2.Request) -> httpx2.Response:
         nonlocal calls
         calls += 1
-        raise httpx.ConnectError("down")
+        raise httpx2.ConnectError("down")
 
     real_sleep = asyncio.sleep
 
@@ -408,9 +435,10 @@ def test_traffic_generator_survives_request_errors(monkeypatch: pytest.MonkeyPat
     monkeypatch.setattr(main.asyncio, "sleep", fast_sleep)
 
     async def run() -> None:
-        task = asyncio.create_task(main.generate_traffic(transport=httpx.MockTransport(handler)))
-        while calls < 3:
-            await real_sleep(0)
+        task = asyncio.create_task(main.generate_traffic(transport=httpx2.MockTransport(handler)))
+        async with asyncio.timeout(5):
+            while calls < 3:
+                await real_sleep(0)
         assert not task.done()
         task.cancel()
         with pytest.raises(asyncio.CancelledError):
@@ -652,3 +680,9 @@ def test_app_log_lines_show_time_and_level_once(monkeypatch: pytest.MonkeyPatch)
     output = buffer.getvalue()
     assert output.count("INFO") == 1
     assert len(re.findall(r"\d{2}:\d{2}:\d{2}", output)) == 1
+
+
+@pytest.mark.parametrize("name", ["httpx2", "httpcore2"])
+def test_http_client_libraries_are_quiet_by_default(name: str) -> None:
+    # Otherwise the traffic generator would log an INFO line per request next to the access log.
+    assert logging.getLogger(name).level == logging.WARNING
