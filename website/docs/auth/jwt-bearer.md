@@ -34,13 +34,14 @@ from pydantic import BaseModel
 from pwdlib import PasswordHash
 
 # ── Config ────────────────────────────────────────────────────────────
-SECRET_KEY = os.environ["JWT_SECRET_KEY"]   # never hardcode this
+SECRET_KEY = os.environ["JWT_SECRET_KEY"]  # never hardcode this
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 15
 
-hasher = PasswordHash.recommended()         # argon2id by default
+hasher = PasswordHash.recommended()  # argon2id by default
 oauth2 = OAuth2PasswordBearer(tokenUrl="/token")
 app = FastAPI()
+
 
 # ── Models ────────────────────────────────────────────────────────────
 class Token(BaseModel):
@@ -48,9 +49,11 @@ class Token(BaseModel):
     token_type: str = "bearer"
     expires_in: int
 
+
 class TokenClaims(BaseModel):
     sub: str
     roles: list[str] = []
+
 
 # ── Fake user store (replace with DB) ─────────────────────────────────
 USERS = {
@@ -60,11 +63,13 @@ USERS = {
     }
 }
 
+
 # ── Helpers ───────────────────────────────────────────────────────────
 def create_access_token(subject: str, roles: list[str]) -> str:
     expire = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {"sub": subject, "roles": roles, "exp": expire}
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
 
 def verify_token(token: str) -> TokenClaims:
     try:
@@ -74,6 +79,7 @@ def verify_token(token: str) -> TokenClaims:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token expired")
     except jwt.InvalidTokenError:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid token")
+
 
 # ── Endpoints ─────────────────────────────────────────────────────────
 @app.post("/token", response_model=Token)
@@ -86,6 +92,7 @@ async def login(form: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Incorrect credentials")
     token = create_access_token(form.username, user["roles"])
     return Token(access_token=token, expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60)
+
 
 @app.get("/api/v1/books")
 async def list_books(claims: Annotated[TokenClaims, Depends(verify_token)]) -> dict:
@@ -113,10 +120,12 @@ Combine with Managed Identity to store `JWT_SECRET_KEY` in Azure Key Vault:
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 
+
 async def load_jwt_secret() -> str:
     credential = DefaultAzureCredential()
     client = SecretClient("https://myvault.vault.azure.net/", credential)
     return client.get_secret("jwt-signing-key").value
+
 
 # In your FastAPI lifespan:
 @asynccontextmanager

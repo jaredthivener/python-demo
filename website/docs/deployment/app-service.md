@@ -26,12 +26,12 @@ az appservice plan create \
   --is-linux \
   --sku B2
 
-# Create the web app (Python 3.13)
+# Create the web app (Python 3.14)
 az webapp create \
   --name my-fastapi-app \
   --resource-group my-rg \
   --plan my-plan \
-  --runtime "PYTHON:3.13"
+  --runtime "PYTHON:3.14"
 ```
 
 ## Enable Managed Identity
@@ -122,7 +122,7 @@ app = FastAPI(lifespan=lifespan)
 az webapp config set \
   --name my-fastapi-app \
   --resource-group my-rg \
-  --startup-file "uvicorn demo.main:app --host 0.0.0.0 --port 8000 --workers 4"
+  --startup-file "uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4"
 ```
 
 ## Deploy
@@ -212,11 +212,11 @@ az monitor autoscale rule create \
 
 ## Health check
 
-App Service can use your `/health` endpoint to take unhealthy instances out of rotation automatically:
+App Service can use your `/api/ps` endpoint to take unhealthy instances out of rotation automatically:
 
 ```bash
 az webapp config set \
   --name my-fastapi-app \
   --resource-group my-rg \
-  --generic-configurations '{"healthCheckPath": "/health"}'
+  --generic-configurations '{"healthCheckPath": "/api/ps"}'
 ```

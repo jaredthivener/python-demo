@@ -43,6 +43,7 @@ keywords:
 python-demo/
 ├── main.py
 ├── tests/
+├── Dockerfile
 ├── pyproject.toml
 ├── README.md
 └── website/
@@ -52,4 +53,5 @@ python-demo/
 
 - New here? Start with [Getting Started](./getting-started.md)
 - Want to understand auth? Go to [Auth Overview](./auth/overview.md)
+- Want a tour of `main.py`? Read [How the Demo Works](./how-it-works.md)
 - Ready to deploy? See the [Deployment guide](./deployment/index.md)

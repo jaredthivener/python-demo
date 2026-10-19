@@ -34,7 +34,7 @@ fastapi-func/
 ├── function_app.py     ← Functions entry point (Python v2)
 ├── host.json
 ├── local.settings.json
-└── demo/               ← your FastAPI app
+└── main.py             ← your FastAPI app
 ```
 
 ## `function_app.py`
@@ -42,7 +42,7 @@ fastapi-func/
 ```python
 # function_app.py
 import azure.functions as func
-from demo.main import app as fastapi_app
+from main import app as fastapi_app
 
 # AsgiFunctionApp wraps the FastAPI ASGI app for the Functions runtime
 app = func.AsgiFunctionApp(app=fastapi_app, http_auth_level=func.AuthLevel.ANONYMOUS)
@@ -80,7 +80,7 @@ That's the entire glue layer. No `function.json`, no subprocess, no custom handl
 Azure Monitor OpenTelemetry is Azure's unified OTel distro — it configures distributed tracing, structured logging, and metrics in a single call:
 
 ```python
-# demo/main.py (or a dedicated telemetry module)
+# main.py (or a dedicated telemetry module)
 import os
 from azure.monitor.opentelemetry import configure_azure_monitor
 
@@ -125,7 +125,7 @@ az functionapp create \
   --resource-group my-rg \
   --consumption-plan-location eastus \
   --runtime python \
-  --runtime-version 3.13 \
+  --runtime-version 3.14 \
   --functions-version 4 \
   --assign-identity [system]
 

@@ -13,6 +13,11 @@ const sidebars: SidebarsConfig = {
       label: "Getting Started",
     },
     {
+      type: "doc",
+      id: "how-it-works",
+      label: "How the Demo Works",
+    },
+    {
       type: "category",
       label: "Authentication & Authorization",
       collapsed: false,

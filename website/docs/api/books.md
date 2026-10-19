@@ -76,7 +76,7 @@ curl -X POST http://localhost:8000/api/v1/books \
 }
 ```
 
-**Response 201:** Full `BookResponse` object with generated `id` and `created_at` values.
+**Response 201:** Full `BookResponse` object with generated `id` and `created_at` values. Unknown fields (including `id`) are rejected with `422`.
 
 ---
 
@@ -106,9 +106,9 @@ curl -X PATCH http://localhost:8000/api/v1/books/3fa85f64-5717-4562-b3fc-2c963f6
   -d '{"year": 2022}'
 ```
 
-Uses `model_dump(exclude_unset=True)` internally — fields omitted from the payload are untouched.
+Uses `model_dump(exclude_unset=True)` internally — fields omitted from the payload are untouched. The merged result is re-validated before it is stored.
 
-Empty payloads are valid and return the existing book unchanged.
+Empty payloads are valid and return the existing book unchanged. Sending `null` for a field, or an unknown field, returns `422`.
 
 ---
 
@@ -159,7 +159,7 @@ The search is case-insensitive and matches both title and author.
 | Status                     | Meaning                                                        |
 | -------------------------- | -------------------------------------------------------------- |
 | `422 Unprocessable Entity` | Validation error (Pydantic) — body contains field-level errors |
-| `404 Not Found`            | Book UUID not in store                                         |
+| `404 Not Found`            | Book UUID not in store (GET, PATCH, and DELETE)                |
 | `405 Method Not Allowed`   | Wrong HTTP verb                                                |
 | `400 Bad Request`          | Invalid `X-Force-Error` header when chaos mode is enabled      |
 | `500` / `503`              | Forced demo failures when chaos mode is enabled                |
@@ -196,4 +196,8 @@ class BookResponse(BaseModel):
     created_at: datetime
 ```
 
-Internal fields (`id`, `created_at`) are never accepted in request bodies — separate `BookCreate` and `BookUpdate` models enforce this boundary.
+Internal fields (`id`, `created_at`) are never accepted in request bodies — separate `BookCreate` and `BookUpdate` models with `extra="forbid"` reject them with `422`.
+
+## Request IDs
+
+Every response carries an `X-Request-ID` header. If the request supplied one matching `[A-Za-z0-9._-]{1,64}` it is echoed back; otherwise a UUID is generated.

@@ -72,12 +72,14 @@ entra_oauth2 = OAuth2AuthorizationCodeBearer(
     },
 )
 
+
 class EntraClaims(BaseModel):
     sub: str
     name: str | None = None
     preferred_username: str | None = None
     roles: list[str] = []
-    scp: str = ""   # delegated scopes
+    scp: str = ""  # delegated scopes
+
 
 # ── JWKS key fetching (cache + rotation handling) ─────────────────────
 key_fetcher = AsyncKeyFetcher(
@@ -88,6 +90,7 @@ key_fetcher = AsyncKeyFetcher(
         }
     },
 )
+
 
 async def verify_entra_token(
     security_scopes: SecurityScopes,
@@ -120,22 +123,28 @@ async def verify_entra_token(
 
     return claims
 
+
 def require_role(role: str):
     """Dependency factory — enforces a specific app role."""
+
     def _check(claims: Annotated[EntraClaims, Depends(verify_entra_token)]) -> EntraClaims:
         if role not in claims.roles:
             raise HTTPException(status.HTTP_403_FORBIDDEN, f"Role '{role}' required")
         return claims
+
     return _check
+
 
 # ── Endpoints ─────────────────────────────────────────────────────────
 app = FastAPI()
 
+
 @app.get("/api/v1/books")
 async def list_books(
-    claims: Annotated[EntraClaims, Security(verify_entra_token, scopes=["Books.Read"])]
+    claims: Annotated[EntraClaims, Security(verify_entra_token, scopes=["Books.Read"])],
 ) -> dict:
     return {"books": [], "user": claims.preferred_username}
+
 
 @app.delete("/api/v1/books/{book_id}")
 async def delete_book(

@@ -44,9 +44,10 @@ from fastapi import Depends
 
 oauth2 = OAuth2PasswordBearer(tokenUrl="/token")
 
+
 @app.get("/api/v1/books")
 async def list_books(token: str = Depends(oauth2)):
-    claims = verify_token(token)   # pure crypto — fast
+    claims = verify_token(token)  # pure crypto — fast
     ...
 ```
 
@@ -66,7 +67,7 @@ Managed Identity gives your app an Azure-managed certificate. It exchanges that 
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 
-credential = DefaultAzureCredential()   # picks up MI automatically in Azure
+credential = DefaultAzureCredential()  # picks up MI automatically in Azure
 client = SecretClient("https://myvault.vault.azure.net/", credential)
 jwt_secret = client.get_secret("jwt-signing-key").value
 ```
@@ -90,6 +91,7 @@ entra_oauth2 = OAuth2AuthorizationCodeBearer(
     authorizationUrl=f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/authorize",
     tokenUrl=f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token",
 )
+
 
 @app.get("/api/v1/admin")
 async def admin_only(token: str = Depends(entra_oauth2)):

@@ -2,7 +2,7 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jaredthivener/python-demo/ci.yml?branch=main&label=CI)](https://github.com/jaredthivener/python-demo/actions/workflows/ci.yml)
 [![Python 3.14+](https://img.shields.io/badge/python-3.14%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/downloads/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.136-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.143-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Docs](https://img.shields.io/badge/docs-Docusaurus-2E8555?logo=docusaurus&logoColor=white)](https://docusaurus.io/)
 
 A compact FastAPI demo app that covers the core API concepts discussed in the docs: validation, pagination, partial updates, rich logging, monitoring endpoints, and HTTP behavior. Authentication and multi-cloud deployment patterns remain in the documentation.
@@ -153,6 +153,15 @@ Example intentional main push:
 ALLOW_PROD_PUSH=true git push origin main
 ```
 
+## Docker
+
+```bash
+docker build -t python-demo .
+docker run --rm -p 8000:8000 python-demo
+```
+
+CI builds this image on every pull request. The Books store is in memory, so run a single replica.
+
 ## Production deployment guardrail
 
 Docs deployment to GitHub Pages is manual-only.
@@ -164,14 +173,17 @@ This explicit confirmation prevents accidental production deploys.
 
 Every request is logged with:
 
-- Timestamp
+- Timestamp (local time)
+- Log level
 - Status code
 - Latency
 - Response size
 - Client IP
 - HTTP method
 - Request path
-- `X-Request-ID`
+- `X-Request-ID` (a safe client-supplied value is reused, anything else is replaced with a UUID)
+
+The level column follows the status: `INFO` below 400, `WARNING` for 4xx, `ERROR` for 5xx. It uses the same colors as the app's own log lines, and the line is emitted through the `python-demo.access` logger so you can also filter or ship it by level.
 
 ## Project layout
 
@@ -179,6 +191,7 @@ Every request is logged with:
 python-demo/
 ├── main.py
 ├── tests/
+├── Dockerfile
 ├── pyproject.toml
 ├── README.md
 └── website/
