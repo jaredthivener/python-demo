@@ -13,7 +13,7 @@ from datetime import UTC, datetime
 from typing import Annotated, Literal, Self
 from uuid import UUID
 
-import httpx
+import httpx2
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query, Request, Response, status
 from fastapi.responses import PlainTextResponse, RedirectResponse
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -62,8 +62,8 @@ log_handler.setFormatter(logging.Formatter("%(message)s"))
 logging.basicConfig(level="INFO", handlers=[log_handler])
 logger = logging.getLogger(APP_NAME)
 
-logging.getLogger("httpx").setLevel(logging.WARNING)
-logging.getLogger("httpcore").setLevel(logging.WARNING)
+logging.getLogger("httpx2").setLevel(logging.WARNING)
+logging.getLogger("httpcore2").setLevel(logging.WARNING)
 logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
 
 console = Console()
@@ -479,7 +479,7 @@ app.state.book_store = build_book_store()
 
 
 # ---------------- Traffic Generator ----------------
-async def generate_traffic(transport: httpx.AsyncBaseTransport | None = None) -> None:
+async def generate_traffic(transport: httpx2.AsyncBaseTransport | None = None) -> None:
     """Send random demo requests to the local server until cancelled."""
     await asyncio.sleep(1.0)
 
@@ -497,12 +497,12 @@ async def generate_traffic(transport: httpx.AsyncBaseTransport | None = None) ->
         f"[bold cyan]Starting background traffic generator targeting {base_url}...[/bold cyan]"
     )
 
-    async with httpx.AsyncClient(base_url=base_url, timeout=5.0, transport=transport) as client:
+    async with httpx2.AsyncClient(base_url=base_url, timeout=5.0, transport=transport) as client:
         while True:
             method, path = random.choice(operations)
             try:
                 await client.request(method, path)
-            except httpx.HTTPError:
+            except httpx2.HTTPError:
                 logger.warning("Traffic generator request failed: %s %s", method, path)
             await asyncio.sleep(random.uniform(0.5, 1.5))
 
