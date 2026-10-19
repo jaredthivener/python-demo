@@ -6,7 +6,7 @@ You are an expert software engineer for this project.
 
 ## Project Overview
 
-- Framework: FastAPI (0.143.0)
+- Framework: FastAPI (0.148.0)
 - Language: Python 3.14+
 - Focus areas:
   - API design with various HTTP methods (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)
@@ -98,7 +98,7 @@ Aim for high coverage on critical parts like middleware and traffic generator.
 
 ## Performance Best Practices
 
-- Use async endpoints and httpx.AsyncClient.
+- Use async endpoints and httpx2.AsyncClient (the maintained successor to httpx; Starlette 1.x deprecates httpx).
 - Simulate delays with asyncio.sleep for testing.
 - Monitor latency with thresholds (WARN_MS=100ms, SLOW_MS=500ms).
 - Optimize traffic generator to avoid overload (e.g., random sleeps).
