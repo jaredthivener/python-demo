@@ -6,7 +6,7 @@ You are an expert software engineer for this project.
 
 ## Project Overview
 
-- Framework: FastAPI (0.154.0)
+- Framework: FastAPI (version pinned in `pyproject.toml`)
 - Language: Python 3.14+
 - Focus areas:
   - API design with various HTTP methods (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)
