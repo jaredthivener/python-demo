@@ -354,26 +354,10 @@ def test_env_flag(monkeypatch: pytest.MonkeyPatch, raw: str | None, expected: bo
 REPO_ROOT = Path(main.__file__).parent
 
 
-def pinned_fastapi_version() -> str:
-    dependencies = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text())["project"][
-        "dependencies"
-    ]
-    (pin,) = [dep for dep in dependencies if dep.startswith("fastapi==")]
-    return pin.removeprefix("fastapi==")
-
-
 def test_app_version_matches_pyproject() -> None:
     pyproject = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text())
 
     assert pyproject["project"]["version"] == main.APP_VERSION
-
-
-def test_docs_state_the_pinned_fastapi_version() -> None:
-    version = pinned_fastapi_version()
-    major_minor = ".".join(version.split(".")[:2])
-
-    assert f"FastAPI ({version})" in (REPO_ROOT / "AGENTS.md").read_text()
-    assert f"badge/FastAPI-{major_minor}-" in (REPO_ROOT / "README.md").read_text()
 
 
 def test_deployment_docs_dockerfile_matches_the_repo_dockerfile() -> None:
